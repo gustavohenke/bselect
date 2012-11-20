@@ -1,4 +1,4 @@
-(function($) {
+(function($, undefined) {
 	"use strict";
 
 	function BSelect(element, settings) {
@@ -52,6 +52,13 @@
 		 */
 		this.options = $();
 
+		/**
+		 * Hide the options list when there's a click outside it.
+		 * Fired on document click.
+		 *
+		 * @since	0.1.0a
+		 * @returns	void
+		 */
 		this._outsideClick = function(e) {
 			if (self.dropdownContainer.is(':visible') && !$(e.target).is('.dropdown-menu, .dropdown-menu *')) {
 				self.hide();
@@ -78,6 +85,7 @@
 				} else {
 					self.dropdownContainer.css('margin-top', 2);
 				}
+				
 				return false;
 			} else {
 				self.hide();
@@ -85,17 +93,20 @@
 		};
 
 		/**
+		 * Hide the options list, with optional clearing of the search results.
+		 *
 		 * @since   0.1.0a
 		 * @returns void
 		 */
-		this.hide = function() {
+		this.hide = function(clear) {
+			clear = clear === undefined ? true : clear;
+			
 			self.dropdownContainer.slideUp(self.settings.animationDuration);
 			self.container.removeClass('open');
 
 			// Clear the search input and the results, if that's case
-			if (self.settings.clearSearchOnExit) {
-				self.searchInput.val('');
-				self.options.appendTo(self.dropdownContainer.find('ul').empty());
+			if (clear && self.settings.clearSearchOnExit) {
+				self.clearSearch();
 			}
 		};
 
@@ -121,11 +132,17 @@
 		 * @returns void
 		 */
 		this.doSearch = function() {
-			var searched = this.value,
-				optionsList, i;
+			var optionsList, i,
+				searched = this.value;
 
+			// Avoid searching for nothing
+			if (searched === '') {
+				self.clearSearch();
+				return;
+			}
+			
 			// Same search? We ain't search again then!
-			if (searched === self.lastSearch) {
+			if ((searched === self.lastSearch) || (searched.length < self.settings.minSearchInput)) {
 				return;
 			}
 
@@ -134,10 +151,18 @@
 
 			for (i = 0; i < self.options.length; i++) {
 				if ($(self.options[i]).text().toLowerCase().indexOf(searched.toLowerCase()) > -1) {
-					//results.add($(options[i]).clone(true));
 					optionsList.append($(self.options[i]).clone(true));
 				}
 			}
+		};
+		
+		/**
+		 * @since	0.1.0a
+		 * @returns	void
+		 */
+		this.clearSearch = function() {
+			self.searchInput.val('');
+			self.options.appendTo(self.dropdownContainer.find('ul').empty());
 		};
 
 		/**
@@ -147,17 +172,19 @@
 		 * @returns void
 		 */
 		this.setup = function() {
-			var container = $("<div class='bselect btn-group' />"),
-				btn = $("<button class='btn' />"),
+			var options, li, i, caret,
 				list = $("<ul class='unstyled' />"),
-				li = $("<li />").append($("<a href='#' />")),
-				options = self.element.find('option'),
-				i = 0;
+				btn = $("<button class='btn' />"),
+				container = $("<div class='bselect btn-group' />");
 
 			if (self.settings.size !== 'normal' && BSelect.bootstrapButtonSizes.indexOf(self.settings.size) > -1) {
 				btn.addClass('btn-' + self.settings.size);
 			}
 
+			li = $("<li />").append($("<a href='#' />")),
+			options = self.element.find('option'),
+			i = 0;
+			
 			for (; i < options.length; i++) {
 				self.options = self.options.add(
 					li.clone()
@@ -167,7 +194,7 @@
 				);
 			}
 
-			var caret = btn.clone().addClass('dropdown-toggle').html("<span class='caret'></span>").appendTo(container);
+			caret = btn.clone().addClass('dropdown-toggle').html("<span class='caret'></span>").appendTo(container);
 			self.label = btn.text(
 				self.settings.placeholder ||
 				self.element.data('placeholder') ||
@@ -196,6 +223,7 @@
 			// Event binding
 			$(document).click(self._outsideClick);
 			caret.click(self.toggle);
+			
 			if (self.settings.showOn === 'both') {
 				self.label.click(self.toggle);
 			}
@@ -234,6 +262,7 @@
 			},
 			showOn : 'both',
 			clearSearchOnExit : true,
+			searchMinInput    : 0,
 			animationDuration : 300
 		}
 	};
