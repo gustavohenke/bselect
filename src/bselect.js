@@ -110,6 +110,10 @@
 		 * @returns void
 		 */
 		this.select = function() {
+			if (typeof that.settings.select === 'function') {
+				that.settings.select.call(that.element, this);
+			}
+
 			var val = $(this).addClass('active').data('value');
 			that.element.val(val);
 			that.label.text($(this).text());
@@ -133,7 +137,7 @@
 				return;
 			}
 			
-			// Same search? We ain't search again then!
+			// Same search/few chars? We won't search then!
 			if ((searched === that.lastSearch) || (searched.length < that.settings.minSearchInput)) {
 				return;
 			}
@@ -255,7 +259,8 @@
 			showOn : 'both',
 			clearSearchOnExit : true,
 			searchMinInput    : 0,
-			animationDuration : 300
+			animationDuration : 300,
+			select            : null
 		}
 	};
 
