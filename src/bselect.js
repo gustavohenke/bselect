@@ -173,8 +173,8 @@
 				btn.addClass('btn-' + that.settings.size);
 			}
 
-			li = $("<li />").append($("<a href='#' />")),
-			options = that.element.find('option'),
+			li = $("<li />").append($("<a href='#' />"));
+			options = that.element.find('option');
 			i = 0;
 			
 			for (; i < options.length; i++) {
