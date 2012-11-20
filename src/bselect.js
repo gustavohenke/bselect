@@ -2,7 +2,7 @@
 	"use strict";
 
 	function BSelect(element, settings) {
-		var self = this;
+		var that = this;
 
 		/**
 		 * @since   0.1.0a
@@ -60,8 +60,8 @@
 		 * @returns	void
 		 */
 		this._outsideClick = function(e) {
-			if (self.dropdownContainer.is(':visible') && !$(e.target).is('.dropdown-menu, .dropdown-menu *')) {
-				self.hide();
+			if (that.dropdownContainer.is(':visible') && !$(e.target).is('.dropdown-menu, .dropdown-menu *')) {
+				that.hide();
 			}
 		};
 
@@ -70,26 +70,17 @@
 		 * @returns void
 		 */
 		this.toggle = function() {
-			if (!self.dropdownContainer.is(':visible')) {
-				self.dropdownContainer.slideDown(self.settings.animationDuration, function() {
-					var height = self.dropdownContainer.outerHeight(),
-						top = self.dropdownContainer.offset().top;
-
-					if ((height + top) > $(window).innerHeight()) {
-						self.dropdownContainer.css('margin-top', -height - self.container.outerHeight() - 2);
-					} else {
-						self.dropdownContainer.css('margin-top', 2);
-					}
-				});
+			if (!that.dropdownContainer.is(':visible')) {
+				that.dropdownContainer.slideDown(that.settings.animationDuration);
 
 				// The following class will allow us to show that nice inset shadow in .dropdown-toggle
-				self.container.addClass('open');
+				that.container.addClass('open');
 
-				self.searchInput.innerWidth(self.searchInput.parent().width() - self.searchInput.next().outerWidth());
+				that.searchInput.innerWidth(that.searchInput.parent().width() - that.searchInput.next().outerWidth());
 				
 				return false;
 			} else {
-				self.hide();
+				that.hide();
 			}
 		};
 
@@ -102,12 +93,12 @@
 		this.hide = function(clear) {
 			clear = clear === undefined ? true : clear;
 			
-			self.dropdownContainer.slideUp(self.settings.animationDuration);
-			self.container.removeClass('open');
+			that.dropdownContainer.slideUp(that.settings.animationDuration);
+			that.container.removeClass('open');
 
 			// Clear the search input and the results, if that's case
-			if (clear && self.settings.clearSearchOnExit) {
-				self.clearSearch();
+			if (clear && that.settings.clearSearchOnExit) {
+				that.clearSearch();
 			}
 		};
 
@@ -120,9 +111,9 @@
 		 */
 		this.select = function() {
 			var val = $(this).addClass('active').data('value');
-			self.element.val(val);
-			self.label.text($(this).text());
-			self.hide();
+			that.element.val(val);
+			that.label.text($(this).text());
+			that.hide();
 		};
 
 		/**
@@ -138,21 +129,21 @@
 
 			// Avoid searching for nothing
 			if (searched === '') {
-				self.clearSearch();
+				that.clearSearch();
 				return;
 			}
 			
 			// Same search? We ain't search again then!
-			if ((searched === self.lastSearch) || (searched.length < self.settings.minSearchInput)) {
+			if ((searched === that.lastSearch) || (searched.length < that.settings.minSearchInput)) {
 				return;
 			}
 
-			optionsList = self.dropdownContainer.find('ul');
+			optionsList = that.dropdownContainer.find('ul');
 			optionsList.find('> li').detach();
 
-			for (i = 0; i < self.options.length; i++) {
-				if ($(self.options[i]).text().toLowerCase().indexOf(searched.toLowerCase()) > -1) {
-					optionsList.append($(self.options[i]).clone(true));
+			for (i = 0; i < that.options.length; i++) {
+				if ($(that.options[i]).text().toLowerCase().indexOf(searched.toLowerCase()) > -1) {
+					optionsList.append($(that.options[i]).clone(true));
 				}
 			}
 		};
@@ -162,8 +153,8 @@
 		 * @returns	void
 		 */
 		this.clearSearch = function() {
-			self.searchInput.val('');
-			self.options.appendTo(self.dropdownContainer.find('ul').empty());
+			that.searchInput.val('');
+			that.options.appendTo(that.dropdownContainer.find('ul').empty());
 		};
 
 		/**
@@ -178,16 +169,16 @@
 				btn = $("<button class='btn' />"),
 				container = $("<div class='bselect btn-group' />");
 
-			if (self.settings.size !== 'normal' && BSelect.bootstrapButtonSizes.indexOf(self.settings.size) > -1) {
-				btn.addClass('btn-' + self.settings.size);
+			if (that.settings.size !== 'normal' && BSelect.bootstrapButtonSizes.indexOf(that.settings.size) > -1) {
+				btn.addClass('btn-' + that.settings.size);
 			}
 
 			li = $("<li />").append($("<a href='#' />")),
-			options = self.element.find('option'),
+			options = that.element.find('option'),
 			i = 0;
 			
 			for (; i < options.length; i++) {
-				self.options = self.options.add(
+				that.options = that.options.add(
 					li.clone()
 						.find('a').text($(options[i]).text()).end()
 						.data('value', options[i].value)
@@ -196,41 +187,41 @@
 			}
 
 			caret = btn.clone().addClass('dropdown-toggle').html("<span class='caret'></span>").appendTo(container);
-			self.label = btn.text(
-				self.settings.placeholder ||
-				self.element.data('placeholder') ||
+			that.label = btn.text(
+				that.settings.placeholder ||
+				that.element.data('placeholder') ||
 				$.bselect.defaults.i18n.selectAnOption
 			).prependTo(container);
 
-			self.dropdownContainer = $('<div />')
+			that.dropdownContainer = $('<div />')
 				.addClass('dropdown-menu')
 				.append(list)
 				.appendTo(container);
 
-			self.searchInput = $("<input type='text' />");
+			that.searchInput = $("<input type='text' />");
 			$("<div class='input-append' />")
-				.append(self.searchInput)
+				.append(that.searchInput)
 				.append('<span class="add-on"><i class="icon-search"></i></span>')
-				.prependTo(self.dropdownContainer);
+				.prependTo(that.dropdownContainer);
 
-			this.container = container.insertAfter(self.element);
+			this.container = container.insertAfter(that.element);
 
 			// Width fixes
-			btn.innerWidth(self.element.innerWidth() - caret.outerWidth());
+			btn.innerWidth(that.element.innerWidth() - caret.outerWidth());
 
 			// Then, we can hide this ugly select box
-			self.element.hide();
+			that.element.hide();
 
 			// Event binding
-			$(document).click(self._outsideClick);
-			caret.click(self.toggle);
+			$(document).click(that._outsideClick);
+			caret.click(that.toggle);
 			
-			if (self.settings.showOn === 'both') {
-				self.label.click(self.toggle);
+			if (that.settings.showOn === 'both') {
+				that.label.click(that.toggle);
 			}
 			
-			self.searchInput.keyup(self.doSearch);
-			list.on('click', 'li', self.select);
+			that.searchInput.keyup(that.doSearch);
+			list.on('click', 'li', that.select);
 		};
 
 		this.setup();
