@@ -71,20 +71,21 @@
 		 */
 		this.toggle = function() {
 			if (!self.dropdownContainer.is(':visible')) {
-				self.dropdownContainer.slideDown(self.settings.animationDuration);
+				self.dropdownContainer.slideDown(self.settings.animationDuration, function() {
+					var height = self.dropdownContainer.outerHeight(),
+						top = self.dropdownContainer.offset().top;
+
+					if ((height + top) > $(window).innerHeight()) {
+						self.dropdownContainer.css('margin-top', -height - self.container.outerHeight() - 2);
+					} else {
+						self.dropdownContainer.css('margin-top', 2);
+					}
+				});
+
 				// The following class will allow us to show that nice inset shadow in .dropdown-toggle
 				self.container.addClass('open');
 
 				self.searchInput.innerWidth(self.searchInput.parent().width() - self.searchInput.next().outerWidth());
-
-				var height = self.dropdownContainer.outerHeight(),
-					top = self.dropdownContainer.offset().top;
-
-				if ((height + top) > $(document).innerHeight()) {
-					self.dropdownContainer.css('margin-top', -height - self.container.outerHeight() - 2);
-				} else {
-					self.dropdownContainer.css('margin-top', 2);
-				}
 				
 				return false;
 			} else {
