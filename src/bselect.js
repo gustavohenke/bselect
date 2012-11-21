@@ -56,6 +56,7 @@
 		 * Hide the options list when there's a click outside it.
 		 * Fired on document click.
 		 *
+		 * @private
 		 * @since	0.1.0a
 		 * @returns	void
 		 */
@@ -66,11 +67,24 @@
 		};
 
 		/**
+		 * @private
+		 * @since   0.1.0a
+		 * @returns void
+		 */
+		this._adjustDropdownHeight = function() {
+			var UL = that.dropdownContainer.find('ul'),
+				len = UL.find('> li').length;
+
+			UL.innerHeight(parseInt(UL.css('line-height'), 10) * 1.5 * (len < 5 ? len : 5));
+		};
+
+		/**
 		 * @since   0.1.0a
 		 * @returns void
 		 */
 		this.toggle = function() {
 			if (!that.dropdownContainer.is(':visible')) {
+				that._adjustDropdownHeight();
 				that.dropdownContainer.slideDown(that.settings.animationDuration);
 
 				// The following class will allow us to show that nice inset shadow in .dropdown-toggle
@@ -150,6 +164,7 @@
 					optionsList.append($(that.options[i]).clone(true));
 				}
 			}
+			that._adjustDropdownHeight();
 		};
 		
 		/**
@@ -159,6 +174,7 @@
 		this.clearSearch = function() {
 			that.searchInput.val('');
 			that.options.appendTo(that.dropdownContainer.find('ul').empty());
+			that._adjustDropdownHeight();
 		};
 
 		/**
