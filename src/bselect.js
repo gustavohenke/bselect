@@ -128,6 +128,9 @@
 				that.settings.select.call(that.element, this);
 			}
 
+			// Avoid multiple highlighted items
+			that.dropdownContainer.find('li.active').removeClass('active');
+			
 			var val = $(this).addClass('active').data('value');
 			that.element.val(val);
 			that.label.text($(this).text());
