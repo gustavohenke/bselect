@@ -59,6 +59,12 @@
 		this.options = $();
 
 		/**
+		 * @since   0.1.0a
+		 * @type    {String}
+		 */
+		this.value = null;
+
+		/**
 		 * Hide the options list when there's a click outside it.
 		 * Fired on document click.
 		 *
@@ -144,17 +150,22 @@
 		 * @returns void
 		 */
 		this.select = function() {
-			if (typeof that.settings.select === 'function') {
-				that.settings.select.call(that.element, this);
-			}
-
 			// Avoid multiple highlighted items
 			that.dropdownContainer.find('li.active').removeClass('active');
 			
 			var val = $(this).addClass('active').data('value');
-			that.element.val(val);
+			that.value = val;
 			that.label.text($(this).text());
 			that.hide();
+
+			// Allow the element to not update within bselect
+			if (!that.settings.synchronizeElement) {
+				that.element.val(val);
+			}
+
+			if (typeof that.settings.select === 'function') {
+				that.settings.select.call(that.element, this);
+			}
 		};
 
 		/**
@@ -302,7 +313,8 @@
 			clearSearchOnExit : true,
 			searchMinInput    : 0,
 			animationDuration : 300,
-			select            : null
+			select            : null,
+			synchronizeElement: true
 		}
 	};
 
