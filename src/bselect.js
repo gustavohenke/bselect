@@ -32,6 +32,12 @@
 		 * @since   0.1.0a
 		 * @type    {jQuery}
 		 */
+		this.list = null;
+
+		/**
+		 * @since   0.1.0a
+		 * @type    {jQuery}
+		 */
 		this.searchInput = null;
 
 		/**
@@ -67,25 +73,39 @@
 		};
 
 		/**
+		 * Adjust the dropdown height. If there are less than 5 items shown, that will be the size of the dropdown;
+		 * otherwise, the size will be fixed to 5.
+		 * Fired everytime the dropdown is shown or the search is refreshed.
+		 *
 		 * @private
 		 * @since   0.1.0a
 		 * @returns void
 		 */
 		this._adjustDropdownHeight = function() {
-			var UL = that.dropdownContainer.find('ul'),
-				len = UL.find('> li').length;
-
-			UL.innerHeight(parseInt(UL.css('line-height'), 10) * 1.5 * (len < 5 ? len : 5));
+			var len = that.list.find('> li').length;
+			that.list.innerHeight(parseInt(that.list.css('line-height'), 10) * 1.5 * (len < 5 ? len : 5));
 		};
 
 		/**
+		 * Show/hide the dropdown box
+		 *
 		 * @since   0.1.0a
 		 * @returns void
 		 */
 		this.toggle = function() {
 			if (!that.dropdownContainer.is(':visible')) {
 				that._adjustDropdownHeight();
-				that.dropdownContainer.slideDown(that.settings.animationDuration);
+				that.dropdownContainer.slideDown(that.settings.animationDuration, function() {
+					if (that.element[0].value) {
+						// Start with the selected value
+						that.options.removeClass('active');
+						var selected = that.options.filter('[data-value="' + that.element[0].value + '"]');
+						selected.addClass('active');
+
+						// Adjust the scroll to match the selected item
+						that.list.scrollTop(selected.position().top - that.list.position().top);
+					}
+				});
 
 				// The following class will allow us to show that nice inset shadow in .dropdown-toggle
 				that.container.addClass('open');
@@ -188,7 +208,6 @@
 		 */
 		this.setup = function() {
 			var options, li, i, caret,
-				list = $("<ul class='unstyled' />"),
 				btn = $("<button class='btn' />"),
 				container = $("<div class='bselect btn-group' />");
 
@@ -199,16 +218,18 @@
 			li = $("<li />").append($("<a href='#' />"));
 			options = that.element.find('option');
 			i = 0;
-			
+			that.list = $("<ul class='unstyled' />");
+
 			for (; i < options.length; i++) {
 				that.options = that.options.add(
 					li.clone()
 						.find('a').text($(options[i]).text()).end()
-						.data('value', options[i].value)
-						.appendTo(list)
+						.attr('data-value', options[i].value)
+						.appendTo(that.list)
 				);
 			}
 
+			// We'll handle our caret button and the dropdown label now
 			caret = btn.clone().addClass('dropdown-toggle').html("<span class='caret'></span>").appendTo(container);
 			that.label = btn.text(
 				that.settings.placeholder ||
@@ -216,11 +237,13 @@
 				$.bselect.defaults.i18n.selectAnOption
 			).prependTo(container);
 
+			// Create the container for the dropdown and append the list
 			that.dropdownContainer = $('<div />')
 				.addClass('dropdown-menu')
-				.append(list)
+				.append(that.list)
 				.appendTo(container);
 
+			// Create the  container of the search input
 			that.searchInput = $("<input type='text' />");
 			$("<div class='input-append' />")
 				.append(that.searchInput)
@@ -244,7 +267,7 @@
 			}
 			
 			that.searchInput.keyup(that.doSearch);
-			list.on('click', 'li', that.select);
+			that.list.on('click', 'li', that.select);
 		};
 
 		this.setup();
