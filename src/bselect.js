@@ -1,318 +1,280 @@
+/*!
+ * BSelect v0.1.0a
+ * http://github.com/gustavohenke/bselect
+ */
 (function($, undefined) {
 	"use strict";
 
-	function BSelect(element, settings) {
-		var that = this;
+	var methods = {
+		// Get/set options of the component
+		option : function(option, value) {
+			var curr = this.data("bselect").options || {};
 
-		/**
-		 * @since   0.1.0a
-		 * @type    {jQuery}
-		 */
-		this.element = element;
-
-		/**
-		 * @since   0.1.0a
-		 * @type    {Object}
-		 */
-		this.settings = $.extend({}, $.bselect.defaults, settings);
-
-		/**
-		 * @since   0.1.0a
-		 * @type    {jQuery}
-		 */
-		this.container = null;
-
-		/**
-		 * @since   0.1.0a
-		 * @type    {jQuery}
-		 */
-		this.dropdownContainer = null;
-
-		/**
-		 * @since   0.1.0a
-		 * @type    {jQuery}
-		 */
-		this.list = null;
-
-		/**
-		 * @since   0.1.0a
-		 * @type    {jQuery}
-		 */
-		this.searchInput = null;
-
-		/**
-		 * @since   0.1.0a
-		 * @type    {jQuery}
-		 */
-		this.label = null;
-
-		/**
-		 * @since   0.1.0a
-		 * @type    {String}
-		 */
-		this.lastSearch = '';
-
-		/**
-		 * @since   0.1.0a
-		 * @type    {jQuery}
-		 */
-		this.options = $();
-
-		/**
-		 * @since   0.1.0a
-		 * @type    {String}
-		 */
-		this.value = null;
-
-		/**
-		 * Hide the options list when there's a click outside it.
-		 * Fired on document click.
-		 *
-		 * @private
-		 * @since	0.1.0a
-		 * @returns	void
-		 */
-		this._outsideClick = function(e) {
-			if (that.dropdownContainer.is(':visible') && !$(e.target).is('.dropdown-menu, .dropdown-menu *')) {
-				that.hide();
+			if (typeof option === "string" && option[0] !== "_") {
+				if (value === undefined) {
+					return curr[option];
+				} else {
+					curr[option] = value;
+				}
+			} else if ($.isPlainObject(option)) {
+				this.data("bselect", $.extend(curr, option));
 			}
-		};
 
-		/**
-		 * Adjust the dropdown height. If there are less than 5 items shown, that will be the size of the dropdown;
-		 * otherwise, the size will be fixed to 5.
-		 * Fired everytime the dropdown is shown or the search is refreshed.
-		 *
-		 * @private
-		 * @since   0.1.0a
-		 * @returns void
-		 */
-		this._adjustDropdownHeight = function() {
-			var len = that.list.find('> li').length;
-			that.list.innerHeight(parseInt(that.list.css('line-height'), 10) * 1.5 * (len < 5 ? len : 5));
-		};
+			return curr;
+		},
 
-		/**
-		 * Show/hide the dropdown box
-		 *
-		 * @since   0.1.0a
-		 * @returns void
-		 */
-		this.toggle = function() {
-			if (!that.dropdownContainer.is(':visible')) {
-				that._adjustDropdownHeight();
-				that.dropdownContainer.slideDown(that.settings.animationDuration, function() {
-					if (that.element[0].value) {
-						// Start with the selected value
-						that.options.removeClass('active');
-						var selected = that.options.filter('[data-value="' + that.element[0].value + '"]');
-						selected.addClass('active');
+		// Retrieve the BSelect container
+		element : function() {
+			return this.data("bselect").element;
+		},
 
-						// Adjust the scroll to match the selected item
-						that.list.scrollTop(selected.position().top - that.list.position().top);
-					}
-				});
+		// Retrieve the currently selected value
+		value : function() {
+			return this.data("bselect").value;
+		},
+		toggle : function(e) {
+			var bselect = _callMethod(this, "element");
 
-				// The following class will allow us to show that nice inset shadow in .dropdown-toggle
-				that.container.addClass('open');
-
-				that.searchInput.innerWidth(that.searchInput.parent().width() - that.searchInput.next().outerWidth());
-				
-				return false;
+			if (bselect.find(".dropdown-menu").is(":hidden")) {
+				_callMethod(this, "show");
+				return (e instanceof $.Event) ? false : this;
 			} else {
-				that.hide();
+				_callMethod(this, "hide");
 			}
-		};
 
-		/**
-		 * Hide the options list, with optional clearing of the search results.
-		 *
-		 * @since   0.1.0a
-		 * @returns void
-		 */
-		this.hide = function(clear) {
+			return this;
+		},
+		show : function() {
+			var searchInput;
+			var bselect = _callMethod(this, "element");
+
+			bselect.find(".dropdown-menu").slideDown(_callMethod(this, "option", "animationDuration"), function() {
+				adjustDropdownHeight(bselect);
+			});
+
+			// The following class will allow us to show that nice inset shadow in .dropdown-toggle
+			bselect.addClass('open');
+
+			// Adjust the size of the search input to match the container inner width
+			searchInput = bselect.find(".bselect-search");
+			searchInput.innerWidth(searchInput.parent().width() - searchInput.next().outerWidth());
+
+			return this;
+		},
+		hide : function(clear) {
+			var options = _callMethod(this, "option"),
+				bselect = _callMethod(this, "element");
+
 			clear = clear === undefined ? true : clear;
-			
-			that.dropdownContainer.slideUp(that.settings.animationDuration);
-			that.container.removeClass('open');
+
+			bselect.find(".dropdown-menu").slideUp(options.animationDuration);
+			bselect.removeClass('open');
 
 			// Clear the search input and the results, if that's case
-			if (clear && that.settings.clearSearchOnExit) {
-				that.clearSearch();
-			}
-		};
-
-		/**
-		 * Selects an element on the list. Will update the value of the select and the label of the bselect component.
-		 * Fired on click of an <li> inside the dropdown menu.
-		 *
-		 * @since   0.1.0a
-		 * @returns void
-		 */
-		this.select = function() {
-			// Avoid multiple highlighted items
-			that.dropdownContainer.find('li.active').removeClass('active');
-			
-			var val = $(this).addClass('active').data('value');
-			that.value = val;
-			that.label.text($(this).text());
-			that.hide();
-
-			// Allow the element to not update within bselect
-			if (!that.settings.synchronizeElement) {
-				that.element.val(val);
+			if (clear && options.clearSearchOnExit) {
+				_callMethod(this, "clearSearch");
 			}
 
-			if (typeof that.settings.select === 'function') {
-				that.settings.select.call(that.element, this);
-			}
-		};
+			return this;
+		},
 
-		/**
-		 * Search all our options looking for the typed text.
-		 * Fired on keyup of the search input.
-		 *
-		 * @since   0.1.0a
-		 * @returns void
-		 */
-		this.doSearch = function() {
-			var optionsList, i,
-				searched = this.value;
+		// Clear the search input and reset the dropdown
+		clearSearch : function() {
+			var bselect = _callMethod(this, "element");
 
-			// Avoid searching for nothing
-			if (searched === '') {
-				that.clearSearch();
-				return;
-			}
-			
-			// Same search/few chars? We won't search then!
-			if ((searched === that.lastSearch) || (searched.length < that.settings.minSearchInput)) {
-				return;
-			}
+			bselect.find(".bselect-search").val("");
+			bselect.find("li").show();
 
-			optionsList = that.dropdownContainer.find('ul');
-			optionsList.find('> li').detach();
+			adjustDropdownHeight(bselect);
+			return this;
+		},
+		select : function(arg) {
+			var $elem, val;
+			var options = _callMethod(this, "option"),
+				bselect = _callMethod(this, "element");
 
-			for (i = 0; i < that.options.length; i++) {
-				if ($(that.options[i]).text().toLowerCase().indexOf(searched.toLowerCase()) > -1) {
-					optionsList.append($(that.options[i]).clone(true));
+			if (arg instanceof $.Event) {
+				$elem = $(arg.currentTarget);
+			} else {
+				$elem = bselect.find("li").eq(arg);
+
+				if (!$elem.length) {
+					return bselect;
 				}
 			}
-			that._adjustDropdownHeight();
-		};
-		
-		/**
-		 * @since	0.1.0a
-		 * @returns	void
-		 */
-		this.clearSearch = function() {
-			that.searchInput.val('');
-			that.options.appendTo(that.dropdownContainer.find('ul').empty());
-			that._adjustDropdownHeight();
-		};
 
-		/**
-		 * Initialization/setup stuff
-		 *
-		 * @since   0.1.0a
-		 * @returns void
-		 */
-		this.setup = function() {
-			var options, li, i, caret,
-				btn = $("<button class='btn' />"),
-				container = $("<div class='bselect btn-group' />");
+			// Remove the highlighted status from any item
+			bselect.find("li").removeClass("active");
 
-			if (that.settings.size !== 'normal' && BSelect.bootstrapButtonSizes.indexOf(that.settings.size) > -1) {
-				btn.addClass('btn-' + that.settings.size);
+			val = $elem.addClass("active").data("value");
+			this.data("bselect").value = val;
+
+			bselect.find(".bselect-label").text($elem.text());
+			_callMethod(this, "hide");
+
+			if (options.synchronizeElement) {
+				this.val(val);
 			}
 
-			li = $("<li />").append($("<a href='#' />"));
-			options = that.element.find('option');
-			i = 0;
-			that.list = $("<ul class='unstyled' />");
-
-			for (; i < options.length; i++) {
-				that.options = that.options.add(
-					li.clone()
-						.find('a').text($(options[i]).text()).end()
-						.attr('data-value', options[i].value)
-						.appendTo(that.list)
-				);
+			// Trigger the select event...
+			if (typeof options.select === "function") {
+				options.select.call(this, val, $elem);
 			}
 
-			// We'll handle our caret button and the dropdown label now
-			caret = btn.clone().addClass('dropdown-toggle').html("<span class='caret'></span>").appendTo(container);
-			that.label = btn.text(
-				that.settings.placeholder ||
-				that.element.data('placeholder') ||
-				$.bselect.defaults.i18n.selectAnOption
-			).prependTo(container);
+			return this;
+		},
 
-			// Create the container for the dropdown and append the list
-			that.dropdownContainer = $('<div />')
-				.addClass('dropdown-menu')
-				.append(that.list)
-				.appendTo(container);
+		// Searches every item in the list for the given text
+		search : function(arg) {
+			var listItems, i;
+			var options = _callMethod(this, "option"),
+				searched = (arg instanceof $.Event) ? arg.target.value : arg;
 
-			// Create the  container of the search input
-			that.searchInput = $("<input type='text' />");
-			$("<div class='input-append' />")
-				.append(that.searchInput)
-				.append('<span class="add-on"><i class="icon-search"></i></span>')
-				.prependTo(that.dropdownContainer);
-
-			this.container = container.insertAfter(that.element);
-
-			// Width fixes
-			btn.innerWidth(that.element.innerWidth() - caret.outerWidth());
-
-			// Then, we can hide this ugly select box
-			that.element.hide();
-
-			// Event binding
-			$(document).click(that._outsideClick);
-			caret.click(that.toggle);
-			
-			if (that.settings.showOn === 'both') {
-				that.label.click(that.toggle);
+			// Avoid searching for nothing
+			if (searched === "") {
+				_callMethod(this, "clearSearch");
 			}
-			
-			that.searchInput.keyup(that.doSearch);
-			that.list.on('click', 'li', that.select);
-		};
 
-		this.setup();
+			// Same search/few chars? We won't search then!
+			if ((searched === options.lastSearch) || (searched.length < options.minSearchInput)) {
+				return;
+			}
+
+			listItems = _callMethod(this, "element").find("li").hide();
+			for (i = 0; i < listItems.length; i++) {
+				if (listItems[i].textContent.toLowerCase().indexOf(searched.toLowerCase()) > -1) {
+					$(listItems[i]).show();
+				}
+			}
+
+			adjustDropdownHeight(listItems.end());
+			return this;
+		},
+		destroy : function() {
+			var bselect = _callMethod(this, "element");
+			this.data("bselect", null);
+
+			bselect.remove();
+			this.show();
+		}
+	};
+	var bootstrapButtonSizes = ["mini", "small", "large"];
+
+	// Helper function that will call an BSelect method in the context of $elem
+	function _callMethod($elem, method) {
+		if (methods[method] !== undefined) {
+			return methods[method].apply($elem, Array.prototype.slice.call(arguments, 2));
+		}
+
+		return $elem;
 	}
 
-	BSelect.bootstrapButtonSizes = ['mini', 'small', 'large'];
+	function getPlaceholder($elem) {
+		return _callMethod($elem, "option", "placeholder") ||
+				$elem.data("placeholder") ||
+				$.bselect.defaults.i18n.selectAnOption;
+	}
 
-	/**
-	 * @since   0.1.0a
-	 * @param   {Object} [settings]
-	 * @return  {jQuery}
-	 */
-	$.fn.bselect = function(settings) {
-		return this.each(function() {
-			var $this = $(this),
-				data = $(this).data('bselect');
+	function adjustDropdownHeight($elem) {
+		var list = $elem.find(".dropdown-list"),
+			len = list.find("li:visible").length;
 
-			settings = $.isPlainObject(settings) ? settings : {};
-			if (!data) {
-				$this.data('bselect', new BSelect($this, settings));
+		list.innerHeight(parseInt(list.css("line-height"), 10) * 1.5 * (len < 5 ? len : 5));
+	}
+
+	function setup(elem, options) {
+		var caret, label, container, html;
+		var $elem = $(elem),
+			btn = $("<button class='btn' />");
+
+		// First of, let's build the base HTML of BSelect
+		html = "<div class='bselect btn-group'>";
+		html += "<div class='dropdown-menu'>";
+
+		if (options.searchInput) {
+			html += "<div class='input-append'>" +
+						"<input type='text' class='bselect-search' />" +
+						"<span class='add-on'><i class='icon-search'></i></span>" +
+					"</div>";
+		}
+
+		html += "<ul class='unstyled dropdown-list'>";
+
+		$elem.find("option").each(function() {
+			html += "<li data-value='" + this.value + "'>" +
+						"<a href='#'>" + this.text + "</a>" +
+					"</li>";
+		});
+		html += "</ul></div></div>";
+
+		container = $elem.after(html).next();
+
+		// Save some precious data in the original select now, as we have the container in the DOM
+		$elem.data("bselect", {
+			options : options,
+			element : container
+		});
+
+		if (options.size !== "normal" && bootstrapButtonSizes.indexOf(options.size) > -1) {
+			btn.addClass("btn-" + options.size);
+		}
+
+		label = btn.clone().addClass("bselect-label").text(getPlaceholder($elem));
+		caret = btn.addClass("dropdown-toggle").html("<span class='caret'></span>");
+		container.prepend(caret).prepend(label);
+
+		label.innerWidth($elem.innerWidth() - caret.outerWidth());
+		
+		// Hide this ugly select!
+		$elem.hide();
+
+		// Event binding
+		$(document).click(function(e) {
+			if (container.find(".dropdown-menu").is(":visible") &&
+				!$('.dropdown-menu, .dropdown-menu *', container).find(e.target).length) {
+				_callMethod($elem, "hide");
 			}
+		});
+
+		// Showing the options list
+		caret.click($.proxy(methods.toggle, $elem));
+		if (options.showOn === "both") {
+			label.click($.proxy(methods.toggle, $elem));
+		}
+
+		container.find(".bselect-search").keyup($.proxy(methods.search, $elem));
+		container.on("click", "li", $.proxy(methods.select, $elem));
+	}
+
+	$.fn.bselect = function(arg) {
+		return this.each(function() {
+			var $this = $(this);
+
+			if (typeof arg === "string" && $.isPlainObject($this.data("bselect"))) {
+				if (methods[arg] !== undefined) {
+					return methods[arg].apply($this, Array.prototype.slice.call(arguments, 1));
+				}
+			}
+
+			arg = $.isPlainObject(arg) ? arg : {};
+			arg = $.extend({}, $.bselect.defaults, arg);
+
+			setup(this, arg);
+			return $this;
 		});
 	};
 
 	$.bselect = {
 		defaults : {
-			size : 'normal',
+			size : "normal",
 			i18n : {
-				selectAnOption : 'Select an option...'
+				selectAnOption : "Select an option..."
 			},
-			showOn : 'both',
+			showOn : "both",
 			clearSearchOnExit : true,
 			searchMinInput    : 0,
 			animationDuration : 300,
+			searchInput       : true,
 			select            : null,
 			synchronizeElement: true
 		}
