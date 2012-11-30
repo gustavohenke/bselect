@@ -268,11 +268,11 @@
 		defaults : {
 			size : "normal",
 			i18n : {
-				selectAnOption : "Select an option..."
+				selectAnOption : "Select an option"
 			},
 			showOn : "both",
 			clearSearchOnExit : true,
-			searchMinInput    : 0,
+			minSearchInput    : 0,
 			animationDuration : 300,
 			searchInput       : true,
 			select            : null,
