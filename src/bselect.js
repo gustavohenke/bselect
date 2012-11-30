@@ -268,7 +268,7 @@
 		defaults : {
 			size : "normal",
 			i18n : {
-				selectAnOption : "Select an option..."
+				selectAnOption : "Select an option"
 			},
 			showOn : "both",
 			clearSearchOnExit : true,
