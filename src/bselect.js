@@ -1,6 +1,12 @@
 /*!
  * BSelect v0.1.0a
+ * The select decorator component that was missing for Twitter Bootstrap.
+ *
+ * More info:
  * http://github.com/gustavohenke/bselect
+ *
+ * @version  0.1.0
+ * @requires jQuery
  */
 (function($, undefined) {
 	"use strict";
