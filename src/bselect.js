@@ -11,6 +11,7 @@
 (function($, undefined) {
 	"use strict";
 
+	var elements = 0;
 	var methods = {
 		// Get/set options of the component
 		option : function(option, value) {
@@ -21,9 +22,10 @@
 					return curr[option];
 				} else {
 					curr[option] = value;
+					return this;
 				}
 			} else if ($.isPlainObject(option)) {
-				this.data("bselect", $.extend(curr, option));
+				return this.data("bselect", $.extend(curr, option));
 			}
 
 			return curr;
@@ -105,7 +107,7 @@
 				$elem = bselect.find("li").eq(arg);
 
 				if (!$elem.length) {
-					return bselect;
+					return this;
 				}
 			}
 
@@ -194,7 +196,7 @@
 			btn = $("<button class='btn' />");
 
 		// First of, let's build the base HTML of BSelect
-		html = "<div class='bselect btn-group'>";
+		html = "<div class='bselect btn-group' id='bselect-" + (++elements) + "'>";
 		html += "<div class='dropdown-menu'>";
 
 		if (options.searchInput) {
@@ -207,7 +209,7 @@
 		html += "<ul class='unstyled dropdown-list'>";
 
 		$elem.find("option").each(function() {
-			html += "<li data-value='" + this.value + "'>" +
+			html += "<li class='bselect-option' data-value='" + this.value + "'>" +
 						"<a href='#'>" + this.text + "</a>" +
 					"</li>";
 		});
@@ -253,20 +255,17 @@
 	}
 
 	$.fn.bselect = function(arg) {
-		return this.each(function() {
-			var $this = $(this);
-
-			if (typeof arg === "string" && $.isPlainObject($this.data("bselect"))) {
-				if (methods[arg] !== undefined) {
-					return methods[arg].apply($this, Array.prototype.slice.call(arguments, 1));
-				}
+		if (typeof arg === "string" && this[0] && $.isPlainObject($(this[0]).data("bselect"))) {
+			if (methods[arg] !== undefined) {
+				return methods[arg].apply($(this[0]), Array.prototype.slice.call(arguments, 1));
 			}
+		}
 
+		return this.each(function() {
 			arg = $.isPlainObject(arg) ? arg : {};
 			arg = $.extend({}, $.bselect.defaults, arg);
 
 			setup(this, arg);
-			return $this;
 		});
 	};
 
