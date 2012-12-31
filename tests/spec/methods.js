@@ -19,7 +19,7 @@
 	test("option", function() {
 		var option = this.select.bselect("option");
 
-		ok($.isPlainObject(option), "returns hash without arguments");
+		ok($.isPlainObject(option), "returns hash with all options when no option defined");
 		notStrictEqual(option.minSearchInput, undefined, "default option keys are present in the options hash");
 
 		option = this.select.bselect("option", "minSearchInput", 2);
@@ -39,6 +39,21 @@
 
 		this.select.bselect("select", 4);
 		ok(li.is(".active"), "if the index is not found, shouldn't do anything");
+	});
+
+	test("search", function() {
+		var select = this.select.bselect("search", "1"),
+			LI = this.select.bselect("element").find("li");
+
+		ok(select.is(this.select), "returns the select element");
+		strictEqual(LI.filter(":visible").length, 1, "shows only the items with the searched term");
+
+		// In the HTML, the <option> tags contain text like "Option 1".
+		this.select.bselect("search", "option");
+		strictEqual(LI.filter(":visible").length, 3, "search is case insensitive");
+
+		this.select.bselect("search", "");
+		strictEqual(LI.filter(":visible").length, 3, "clears the search when no input given");
 	});
 	
 })(jQuery);
