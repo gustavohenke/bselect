@@ -1,0 +1,18 @@
+.bselect .btn {
+  text-align: left;
+}
+.bselect .dropdown-menu {
+  display: none;
+  width: 97%;
+  padding: 5px 1.5%;
+  z-index: 10000;
+}
+.bselect .dropdown-menu ul {
+  line-height: 20px;
+  width: 100%;
+  margin: 0;
+  overflow-y: auto;
+}
+.bselect .dropdown-menu ul li > a {
+  padding: 5px 20px 5px 15px;
+}
