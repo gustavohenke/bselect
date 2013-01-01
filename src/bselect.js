@@ -136,11 +136,16 @@
 		search : function(arg) {
 			var listItems, i;
 			var options = _callMethod(this, "option"),
-				searched = (arg instanceof $.Event) ? arg.target.value : arg;
+				searched = (arg instanceof $.Event) ? arg.target.value : arg,
+				bselect = _callMethod(this, "element");
 
 			// Avoid searching for nothing
 			if (searched === "") {
 				_callMethod(this, "clearSearch");
+			}
+
+			if (!(arg instanceof $.Event)) {
+				bselect.find(".bselect-search").val(searched);
 			}
 
 			// Same search/few chars? We won't search then!
@@ -148,7 +153,7 @@
 				return;
 			}
 
-			listItems = _callMethod(this, "element").find("li").hide();
+			listItems = bselect.find("li").hide();
 			for (i = 0; i < listItems.length; i++) {
 				if (listItems[i].textContent.toLowerCase().indexOf(searched.toLowerCase()) > -1) {
 					$(listItems[i]).show();

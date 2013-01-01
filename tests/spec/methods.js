@@ -55,5 +55,14 @@
 		this.select.bselect("search", "");
 		strictEqual(LI.filter(":visible").length, 3, "clears the search when no input given");
 	});
+
+	test("clearSearch", function() {
+		var select = this.select.bselect("search", "1").bselect("clearSearch"),
+			bselect = this.select.bselect("element");
+
+		ok(select.is(this.select), "returns the select element");
+		strictEqual(bselect.find(".bselect-search").val(), "", "the search text must have no value");
+		strictEqual(bselect.find("li:visible").length, 3, "all items must be visible");
+	});
 	
 })(jQuery);
