@@ -1,5 +1,5 @@
 /*!
- * BSelect v0.1.0a
+ * BSelect v0.1.0
  * The select decorator component that was missing for Twitter Bootstrap.
  *
  * More info:
@@ -185,7 +185,7 @@
 	function getPlaceholder($elem) {
 		return _callMethod($elem, "option", "placeholder") ||
 				$elem.data("placeholder") ||
-				$.bselect.defaults.i18n.selectAnOption;
+				$.bselect.i18n.selectAnOption;
 	}
 
 	function adjustDropdownHeight($elem) {
@@ -277,9 +277,6 @@
 	$.bselect = {
 		defaults : {
 			size : "normal",
-			i18n : {
-				selectAnOption : "Select an option"
-			},
 			showOn : "both",
 			clearSearchOnExit : true,
 			minSearchInput    : 0,
@@ -287,6 +284,9 @@
 			searchInput       : true,
 			select            : null,
 			synchronizeElement: true
+		},
+		i18n : {
+			selectAnOption : "Select an option"
 		}
 	};
 
