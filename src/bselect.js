@@ -6,6 +6,7 @@
  * http://github.com/gustavohenke/bselect
  *
  * @version  0.1.0
+ * @author   Gustavo Henke <gustavo@injoin.com.br>
  * @requires jQuery
  */
 (function($, undefined) {
