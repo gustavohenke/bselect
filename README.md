@@ -2,6 +2,9 @@
 
 The select decorator component that was missing for Twitter Bootstrap.
 
+## Demo
+Access [http://gustavohenke.github.com/bselect](http://gustavohenke.github.com/bselect) to see demos.
+
 ## Usage
 
 ```javascript
