@@ -237,7 +237,7 @@
 		caret = btn.addClass("dropdown-toggle").html("<span class='caret'></span>");
 		container.prepend(caret).prepend(label);
 
-		label.width($elem.innerWidth() - caret.outerWidth());
+		label.innerWidth($elem.innerWidth() - caret.outerWidth());
 		
 		// Hide this ugly select!
 		$elem.hide();
