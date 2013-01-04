@@ -18,11 +18,11 @@
 		option: function( option, value ) {
 			var curr = this.data("bselect").options || {};
 
-			if ( typeof option === "string" && option[0] !== "_" ) {
+			if ( typeof option === "string" && option[ 0 ] !== "_" ) {
 				if ( value === undefined ) {
-					return curr[option];
+					return curr[ option ];
 				} else {
-					curr[option] = value;
+					curr[ option ] = value;
 					return this;
 				}
 			} else if ( $.isPlainObject(option) ) {
@@ -41,12 +41,12 @@
 		value: function() {
 			return this.data("bselect").value;
 		},
-		toggle: function(e) {
+		toggle: function( e ) {
 			var bselect = _callMethod( this, "element" );
 
 			if ( bselect.find(".dropdown-menu").is(":hidden") ) {
 				_callMethod( this, "show" );
-				return (e instanceof $.Event) ? false : this;
+				return e instanceof $.Event ? false : this;
 			} else {
 				_callMethod( this, "hide" );
 			}
@@ -77,7 +77,7 @@
 			clear = clear === undefined ? true : clear;
 
 			bselect.find(".dropdown-menu").slideUp( options.animationDuration );
-			bselect.removeClass('open');
+			bselect.removeClass("open");
 
 			// Clear the search input and the results, if that's case
 			if ( clear && options.clearSearchOnExit ) {
@@ -97,7 +97,7 @@
 			adjustDropdownHeight( bselect );
 			return this;
 		},
-		select: function(arg) {
+		select: function( arg ) {
 			var $elem, val;
 			var options = _callMethod( this, "option" ),
 				bselect = _callMethod( this, "element" );
@@ -134,10 +134,10 @@
 		},
 
 		// Searches every item in the list for the given text
-		search: function(arg) {
+		search: function( arg ) {
 			var listItems, i;
 			var options = _callMethod( this, "option" ),
-				searched = (arg instanceof $.Event) ? arg.target.value : arg,
+				searched = arg instanceof $.Event ? arg.target.value : arg,
 				bselect = _callMethod( this, "element" );
 
 			// Avoid searching for nothing
@@ -145,7 +145,7 @@
 				_callMethod( this, "clearSearch" );
 			}
 
-			if ( !(arg instanceof $.Event) ) {
+			if ( !( arg instanceof $.Event ) ) {
 				bselect.find(".bselect-search").val( searched );
 			}
 
@@ -156,8 +156,8 @@
 
 			listItems = bselect.find("li").hide();
 			for ( i = 0; i < listItems.length; i++ ) {
-				if ( listItems[i].textContent.toLowerCase().indexOf( searched.toLowerCase() ) > -1 ) {
-					$( listItems[i] ).show();
+				if ( listItems[ i ].textContent.toLowerCase().indexOf( searched.toLowerCase() ) > -1 ) {
+					$( listItems[ i ] ).show();
 				}
 			}
 
@@ -172,12 +172,12 @@
 			this.show();
 		}
 	};
-	var bootstrapButtonSizes = ["mini", "small", "large"];
+	var bootstrapButtonSizes = [ "mini", "small", "large" ];
 
 	// Helper function that will call an BSelect method in the context of $elem
 	function _callMethod( $elem, method ) {
-		if ( methods[method] !== undefined ) {
-			return methods[method].apply( $elem, Array.prototype.slice.call( arguments, 2 ) );
+		if ( methods[ method ] !== undefined ) {
+			return methods[ method ].apply( $elem, Array.prototype.slice.call( arguments, 2 ) );
 		}
 
 		return $elem;
@@ -202,7 +202,7 @@
 			btn = $("<button class='btn' />");
 
 		// First of, let's build the base HTML of BSelect
-		html = "<div class='bselect btn-group' id='bselect-" + (++elements) + "'>";
+		html = "<div class='bselect btn-group' id='bselect-" + ( ++elements ) + "'>";
 		html += "<div class='dropdown-menu'>";
 
 		if ( options.searchInput ) {
@@ -243,7 +243,7 @@
 		$elem.hide();
 
 		// Event binding
-		$( document ).click(function(e) {
+		$( document ).click(function( e ) {
 			if ( container.find(".dropdown-menu").is(":visible") && !$( ".dropdown-menu, .dropdown-menu *", container ).find( e.target ).length ) {
 				_callMethod( $elem, "hide" );
 			}
@@ -260,9 +260,9 @@
 	}
 
 	$.fn.bselect = function( arg ) {
-		if ( typeof arg === "string" && this[0] && $.isPlainObject( $( this[0] ).data("bselect") ) ) {
-			if ( methods[arg] !== undefined ) {
-				return methods[arg].apply( $( this[0] ), Array.prototype.slice.call( arguments, 1 ) );
+		if ( typeof arg === "string" && this[ 0 ] && $.isPlainObject( $( this[ 0 ] ).data("bselect") ) ) {
+			if ( methods[ arg ] !== undefined ) {
+				return methods[ arg ].apply( $( this[ 0 ] ), Array.prototype.slice.call( arguments, 1 ) );
 			}
 		}
 
