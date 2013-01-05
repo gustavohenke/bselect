@@ -215,6 +215,10 @@
 		html += "<ul class='unstyled dropdown-list'>";
 
 		$elem.find("option").each(function() {
+			if ( !this.value ) {
+				return;
+			}
+
 			html += "<li class='bselect-option' data-value='" + this.value + "'>" +
 						"<a href='#'>" + this.text + "</a>" +
 					"</li>";
