@@ -4,8 +4,8 @@
  * @author Gustavo Henke <gustavo@injoin.com.br>
  * @since  0.1.0
  */
-(function($) {
-	$.extend($.bselect.i18n, {
-		selectAnOption : "Selecione uma opção"
+(function( $ ) {
+	$.extend( $.bselect.i18n, {
+		selectAnOption: "Selecione uma opção"
 	});
-})(jQuery);
+})( jQuery );
