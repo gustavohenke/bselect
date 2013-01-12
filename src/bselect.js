@@ -25,7 +25,7 @@
 					curr[ option ] = value;
 					return this;
 				}
-			} else if ( $.isPlainObject(option) ) {
+			} else if ( $.isPlainObject( option ) ) {
 				return this.data( "bselect", $.extend( curr, option ) );
 			}
 
