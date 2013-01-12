@@ -7,6 +7,7 @@ Access [http://gustavohenke.github.com/bselect](http://gustavohenke.github.com/b
 
 ## Developing bselect
 Do you want to help developing bselect? If so, I'll be pleased if you fork this project :)
+
 __Don't forget:__ you have to work on the __development__ branch and run every test before commiting!
 
 ## Usage
