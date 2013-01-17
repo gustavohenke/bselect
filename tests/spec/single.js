@@ -2,10 +2,10 @@
 	"use strict";
 
 	module("Single select", {
-		setup : function() {
+		setup: function() {
 			this.select = $("#select-1").bselect();
 		},
-		teardown : function() {
+		teardown: function() {
 			this.select.bselect("destroy");
 		}
 	});
