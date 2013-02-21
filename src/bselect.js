@@ -16,17 +16,23 @@
 	var methods = {
 		// Get/set options of the component
 		option: function( option, value ) {
-			var curr = this.data("bselect").options || {};
+			var curr = this.data("bselect").options || {},
+				prev = $.extend( {}, curr );
 
 			if ( typeof option === "string" && option[ 0 ] !== "_" ) {
 				if ( value === undefined ) {
 					return curr[ option ];
 				} else {
 					curr[ option ] = value;
+					updateOptions( this, prev, curr );
+
 					return this;
 				}
 			} else if ( $.isPlainObject( option ) ) {
-				return this.data( "bselect", $.extend( curr, option ) );
+				$.extend( curr, option );
+				updateOptions( this, prev, curr );
+
+				this.data("bselect").options = curr;
 			}
 
 			return curr;
@@ -44,9 +50,17 @@
 		toggle: function( e ) {
 			var bselect = _callMethod( this, "element" );
 
+			if ( e instanceof $.Event ) {
+				var option = _callMethod( this, "option", "showOn" );
+				e.stopPropagation();
+
+				if ( $( e.target ).is(".bselect-label") && option !== "both" ) {
+					return this;
+				}
+			}
+
 			if ( bselect.find(".dropdown-menu").is(":hidden") ) {
 				_callMethod( this, "show" );
-				return e instanceof $.Event ? false : this;
 			} else {
 				_callMethod( this, "hide" );
 			}
@@ -86,17 +100,6 @@
 
 			return this;
 		},
-
-		// Clear the search input and reset the dropdown
-		clearSearch: function() {
-			var bselect = _callMethod( this, "element" );
-
-			bselect.find(".bselect-search").val("");
-			bselect.find("li").show();
-
-			adjustDropdownHeight( bselect );
-			return this;
-		},
 		select: function( arg ) {
 			var $elem, val;
 			var options = _callMethod( this, "option" ),
@@ -125,9 +128,9 @@
 				this.val( val );
 			}
 
-			// Trigger the select event...
-			if ( typeof options.select === "function" ) {
-				options.select.call( this, val, $elem );
+			// Trigger the selected event
+			if ( typeof options.selected === "function" ) {
+				options.selected.call( this, val, $elem );
 			}
 
 			return this;
@@ -164,6 +167,18 @@
 			adjustDropdownHeight( listItems.end() );
 			return this;
 		},
+
+		clearSearch: function() {
+			var bselect = _callMethod( this, "element" );
+
+			bselect.find(".bselect-search").val("");
+			bselect.find("li").show();
+
+			adjustDropdownHeight( bselect );
+
+			return this;
+		},
+
 		destroy : function() {
 			var bselect = _callMethod( this, "element" );
 			this.data( "bselect", null );
@@ -172,6 +187,7 @@
 			this.show();
 		}
 	};
+
 	var bootstrapButtonSizes = [ "mini", "small", "large" ];
 
 	// Helper function that will call an BSelect method in the context of $elem
@@ -183,12 +199,19 @@
 		return $elem;
 	}
 
+	/* Get the placeholder of an element.
+	 * Retrieves in the following order:
+	 * - bselect options
+	 * - .data("placeholder") / attribute data-placeholder
+	 * - Default bselect i18n "selectAnOption"
+	 */
 	function getPlaceholder( $elem ) {
 		return _callMethod( $elem, "option", "placeholder" ) ||
 				$elem.data("placeholder") ||
 				$.bselect.i18n.selectAnOption;
 	}
 
+	// Adjusts the dropdown height of an bselect.
 	function adjustDropdownHeight( $elem ) {
 		var list = $elem.find(".dropdown-list"),
 			len = list.find("li:visible").length;
@@ -196,6 +219,31 @@
 		list.innerHeight( parseInt( list.css("line-height"), 10 ) * 1.5 * ( len < 5 ? len : 5 ) );
 	}
 
+	// Updates visual properties of the bselect after the plugin was initialized
+	function updateOptions( $elem, prev, curr ) {
+		var bselect = _callMethod( $elem, "element" );
+
+		$.each( prev, function(key, val) {
+			if ( curr[ key ] !== val ) {
+				if ( key === "size" ) {
+					var sizes;
+					var btn = bselect.find(".bselect-label, .bselect-caret"),
+						i = 0;
+					
+					sizes = $.map( bootstrapButtonSizes.slice( 0 ), function( size ) {
+						return "btn-" + size;
+					}).join(" ");
+
+					btn.removeClass( sizes );
+					if ( bootstrapButtonSizes.indexOf( curr.size ) > -1 ) {
+						btn.addClass( "btn-" + curr.size );
+					}
+				}
+			}
+		});
+	}
+
+	// Run all the setup stuff
 	function setup( elem, options ) {
 		var caret, label, container, html;
 		var $elem = $( elem ),
@@ -228,21 +276,19 @@
 		container = $elem.after( html ).next();
 
 		// Save some precious data in the original select now, as we have the container in the DOM
-		$elem.data("bselect", {
+		$elem.data( "bselect", {
 			options: options,
 			element: container
 		});
 
-		if ( options.size !== "normal" && bootstrapButtonSizes.indexOf( options.size ) > -1 ) {
-			btn.addClass( "btn-" + options.size );
-		}
+		updateOptions( $elem, $.bselect.defaults, options );
 
 		label = btn.clone().addClass("bselect-label").text( getPlaceholder( $elem ) );
-		caret = btn.addClass("dropdown-toggle").html("<span class='caret'></span>");
+		caret = btn.addClass("dropdown-toggle bselect-caret").html("<span class='caret'></span>");
 		container.prepend( caret ).prepend( label );
 
 		label.outerWidth( $elem.outerWidth() - caret.outerWidth() );
-		
+
 		// Hide this ugly select!
 		$elem.hide();
 
@@ -253,14 +299,9 @@
 			}
 		});
 
-		// Showing the options list
-		caret.click( $.proxy( methods.toggle, $elem ) );
-		if (options.showOn === "both") {
-			label.click( $.proxy( methods.toggle, $elem ) );
-		}
-
-		container.find(".bselect-search").keyup($.proxy(methods.search, $elem));
+		container.find(".bselect-search").keyup( $.proxy( methods.search, $elem ) );
 		container.on( "click", "li", $.proxy( methods.select, $elem ) );
+		container.on( "click", ".bselect-caret, .bselect-label", $.proxy( methods.toggle, $elem ) );
 	}
 
 	$.fn.bselect = function( arg ) {
@@ -287,6 +328,7 @@
 			animationDuration: 300,
 			searchInput: true,
 			select: null,
+			selected: null,
 			synchronizeElement: true
 		},
 		i18n: {

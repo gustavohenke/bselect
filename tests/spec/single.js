@@ -1,7 +1,7 @@
 (function( $ ) {
 	"use strict";
 
-	module("Single select", {
+	module( "Single select", {
 		setup: function() {
 			this.select = $("#select-1").bselect();
 		},
@@ -10,7 +10,7 @@
 		}
 	});
 
-	test("markup structure", function() {
+	test( "markup structure", function() {
 		var bselect = $(".bselect");
 
 		strictEqual( bselect.length, 1, "bselect exists" );
