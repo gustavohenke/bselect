@@ -124,9 +124,8 @@
 			bselect.find(".bselect-label").text( $elem.text() );
 			_callMethod( this, "hide" );
 
-			if ( options.synchronizeElement ) {
-				this.val( val );
-			}
+			// We'll keep up-to-date the old select, too
+			this.val( val );
 
 			// Trigger the selected event
 			if ( typeof options.selected === "function" ) {
@@ -328,8 +327,7 @@
 			animationDuration: 300,
 			searchInput: true,
 			select: null,
-			selected: null,
-			synchronizeElement: true
+			selected: null
 		},
 		i18n: {
 			selectAnOption: "Select an option"
