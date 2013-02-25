@@ -253,7 +253,7 @@
 		html = "<div class='bselect btn-group' id='bselect-" + ( ++elements ) + "'>";
 		html += "<div class='dropdown-menu'>";
 
-		if ( options.searchInput ) {
+		if ( options.searchInput === true ) {
 			html += "<div class='input-append'>" +
 						"<input type='text' class='bselect-search' />" +
 						"<span class='add-on'><i class='icon-search'></i></span>" +

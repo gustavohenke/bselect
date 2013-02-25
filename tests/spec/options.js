@@ -63,19 +63,25 @@
 	});
 
 	test( "minSearchInput", function() {
-		var bselect = this.select.bselect("element");
 		this.select.bselect( "option", "minSearchInput", 3 );
 
 		this.select.bselect("show");
 		this.select.bselect( "search", "1" );
-		strictEqual( bselect.find(".bselect-option:hidden").length, 0, "should not search when fewer characteres than the option were typed" );
+		strictEqual( this.bselect.find(".bselect-option:hidden").length, 0, "should not search when fewer characteres than the option were typed" );
 
 		this.select.bselect( "search", "option 1" );
-		strictEqual( bselect.find(".bselect-option:visible").length, 1, "should search when more characteres than the option were typed" );
+		strictEqual( this.bselect.find(".bselect-option:visible").length, 1, "should search when more characteres than the option were typed" );
 	});
 
-	test( "animationDuration", function() {
-		expect( 0 );
+	test( "searchInput", function() {
+		strictEqual( this.bselect.find(".bselect-search").length, 1, "should have a search input when value is true" );
+
+		this.select.bselect("destroy");
+		this.select.bselect({
+			searchInput: false
+		});
+
+		strictEqual( this.select.bselect("element").find(".bselect-search").length, 0, "should not have a search input when value is false" );
 	});
 
 })( jQuery );
