@@ -59,7 +59,7 @@
 				}
 			}
 
-			if ( bselect.find(".dropdown-menu").is(":hidden") ) {
+			if ( bselect.find(".bselect-dropdown").is(":hidden") ) {
 				_callMethod( this, "show" );
 			} else {
 				_callMethod( this, "hide" );
@@ -71,7 +71,7 @@
 			var searchInput;
 			var bselect = _callMethod( this, "element" );
 
-			bselect.find(".dropdown-menu").slideDown( _callMethod( this, "option", "animationDuration" ), function() {
+			bselect.find(".bselect-dropdown").slideDown( _callMethod( this, "option", "animationDuration" ), function() {
 				adjustDropdownHeight( bselect );
 			});
 
@@ -79,7 +79,7 @@
 			bselect.addClass("open");
 
 			// Adjust the size of the search input to match the container inner width
-			searchInput = bselect.find(".bselect-search");
+			searchInput = bselect.find(".bselect-search-input");
 			searchInput.innerWidth( searchInput.parent().width() - searchInput.next().outerWidth() );
 
 			return this;
@@ -90,7 +90,7 @@
 
 			clear = clear === undefined ? true : clear;
 
-			bselect.find(".dropdown-menu").slideUp( options.animationDuration );
+			bselect.find(".bselect-dropdown").slideUp( options.animationDuration );
 			bselect.removeClass("open");
 
 			// Clear the search input and the results, if that's case
@@ -212,7 +212,7 @@
 
 	// Adjusts the dropdown height of an bselect.
 	function adjustDropdownHeight( $elem ) {
-		var list = $elem.find(".dropdown-list"),
+		var list = $elem.find(".bselect-option-list"),
 			len = list.find("li:visible").length;
 
 		list.innerHeight( parseInt( list.css("line-height"), 10 ) * 1.5 * ( len < 5 ? len : 5 ) );
@@ -249,17 +249,17 @@
 			btn = $("<button class='btn' />");
 
 		// First of, let's build the base HTML of BSelect
-		html = "<div class='bselect btn-group' id='bselect-" + ( ++elements ) + "'>";
-		html += "<div class='dropdown-menu'>";
+		html = "<div class='bselect' id='bselect-" + ( ++elements ) + "'>";
+		html += "<div class='bselect-dropdown'>";
 
 		if ( options.searchInput === true ) {
-			html += "<div class='input-append'>" +
-						"<input type='text' class='bselect-search' />" +
-						"<span class='add-on'><i class='icon-search'></i></span>" +
+			html += "<div class='bselect-search'>" +
+						"<input type='text' class='bselect-search-input' />" +
+						"<span class='bselect-search-icon'><i class='icon-search'></i></span>" +
 					"</div>";
 		}
 
-		html += "<ul class='unstyled dropdown-list'>";
+		html += "<ul class='bselect-option-list'>";
 
 		$elem.find("option").each(function() {
 			if ( !this.value ) {
@@ -282,8 +282,8 @@
 
 		updateOptions( $elem, $.bselect.defaults, options );
 
-		label = btn.clone().addClass("bselect-label").text( getPlaceholder( $elem ) );
-		caret = btn.addClass("dropdown-toggle bselect-caret").html("<span class='caret'></span>");
+		label = $("<span />").addClass("bselect-label").text( getPlaceholder( $elem ) );
+		caret = $("<button type='button' />").addClass("bselect-caret").html("<span class='caret'></span>");
 		container.prepend( caret ).prepend( label );
 
 		label.outerWidth( $elem.outerWidth() - caret.outerWidth() );
@@ -293,12 +293,12 @@
 
 		// Event binding
 		$( document ).click(function( e ) {
-			if ( container.find(".dropdown-menu").is(":visible") && !$( ".dropdown-menu, .dropdown-menu *", container ).find( e.target ).length ) {
+			if ( container.find(".bselect-dropdown").is(":visible") && !$( ".bselect-dropdown, .bselect-dropdown *", container ).find( e.target ).length ) {
 				_callMethod( $elem, "hide" );
 			}
 		});
 
-		container.find(".bselect-search").keyup( $.proxy( methods.search, $elem ) );
+		container.find(".bselect-search-input").keyup( $.proxy( methods.search, $elem ) );
 		container.on( "click", "li", $.proxy( methods.select, $elem ) );
 		container.on( "click", ".bselect-caret, .bselect-label", $.proxy( methods.toggle, $elem ) );
 	}
