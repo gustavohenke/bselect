@@ -229,16 +229,15 @@
 			if ( curr[ key ] !== val ) {
 				if ( key === "size" ) {
 					var sizes;
-					var btn = bselect.find(".bselect-label, .bselect-caret"),
-						i = 0;
-					
+					var i = 0;
+
 					sizes = $.map( bootstrapButtonSizes.slice( 0 ), function( size ) {
-						return "btn-" + size;
+						return "bselect-" + size;
 					}).join(" ");
 
-					btn.removeClass( sizes );
+					bselect.removeClass( sizes );
 					if ( bootstrapButtonSizes.indexOf( curr.size ) > -1 ) {
-						btn.addClass( "btn-" + curr.size );
+						bselect.addClass( "bselect-" + curr.size );
 					}
 				}
 			}
@@ -248,8 +247,7 @@
 	// Run all the setup stuff
 	function setup( elem, options ) {
 		var caret, label, container, html;
-		var $elem = $( elem ),
-			btn = $("<button class='btn' />");
+		var $elem = $( elem );
 
 		// First of, let's build the base HTML of BSelect
 		html = "<div class='bselect' id='bselect-" + ( ++elements ) + "'>";
