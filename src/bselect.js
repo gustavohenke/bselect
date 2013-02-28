@@ -69,11 +69,14 @@
 		},
 		show: function() {
 			var searchInput;
-			var bselect = _callMethod( this, "element" );
+			var bselect = _callMethod( this, "element" ),
+				dropdown = bselect.find(".bselect-dropdown");
 
-			bselect.find(".bselect-dropdown").slideDown( _callMethod( this, "option", "animationDuration" ), function() {
-				adjustDropdownHeight( bselect );
-			});
+			dropdown.css( "left", "-9999em" ).show();
+			adjustDropdownHeight( bselect );
+			dropdown.hide().css( "left", "auto" );
+
+			dropdown.slideDown( _callMethod( this, "option", "animationDuration" ) );
 
 			// The following class will allow us to show that nice inset shadow in .dropdown-toggle
 			bselect.addClass("open");
