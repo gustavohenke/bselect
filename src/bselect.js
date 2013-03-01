@@ -300,7 +300,7 @@
 		});
 
 		container.find(".bselect-search-input").keyup( $.proxy( methods.search, $elem ) );
-		container.on( "click", "li", $.proxy( methods.select, $elem ) );
+		container.on( "click", ".bselect-option", $.proxy( methods.select, $elem ) );
 		container.on( "click", ".bselect-caret, .bselect-label", $.proxy( methods.toggle, $elem ) );
 	}
 
