@@ -49,19 +49,19 @@
 
 		ok( select.is( this.select ), "returns the select element" );
 		ok( bselect.is(".open"), "must be .open" );
-		ok( bselect.find(".dropdown-menu").is(":visible"), "the list of items should get visible" );
+		ok( bselect.find(".bselect-dropdown").is(":visible"), "the list of items should get visible" );
 	});
 
 	test( "hide", function() {
 		var bselect = this.select.bselect("element");
-		bselect.find(".dropdown-menu").show();
+		bselect.find(".bselect-dropdown").show();
 
 		var select = this.select.bselect("hide");
 
 		ok( select.is( this.select ), "returns the select element" );
 		ok( !bselect.is(".open"), "must not be .open" );
 
-		ok( bselect.find(".dropdown-menu").is(":hidden"), "the list of items should get hidden" );
+		ok( bselect.find(".bselect-dropdown").is(":hidden"), "the list of items should get hidden" );
 	});
 
 	test( "toggle", function() {
@@ -69,16 +69,16 @@
 			bselect = this.select.bselect("element");
 
 		ok( select.is( this.select ), "returns the select element" );
-		ok( bselect.find(".dropdown-menu").is(":visible"), "'show' must be called when hidden" );
+		ok( bselect.find(".bselect-dropdown").is(":visible"), "'show' must be called when hidden" );
 
 		select.bselect("toggle");
-		ok( bselect.find(".dropdown-menu").is(":hidden"), "'hide' must be called when visible" );
+		ok( bselect.find(".bselect-dropdown").is(":hidden"), "'hide' must be called when visible" );
 	});
 
 	test( "search", function() {
 		var select = this.select.bselect( "search", "1" ),
 			bselect = this.select.bselect("element"),
-			LI = bselect.find(".dropdown-menu").show().find("li");
+			LI = bselect.find(".bselect-dropdown").show().find("li");
 
 		ok( select.is( this.select ), "returns the select element" );
 		strictEqual( LI.filter(":visible").length, 1, "shows only the items with the searched term" );
@@ -95,7 +95,7 @@
 		var select = this.select.bselect( "search", "1" ).bselect("clearSearch"),
 			bselect = this.select.bselect("element");
 
-		bselect.find(".dropdown-menu").show();
+		bselect.find(".bselect-dropdown").show();
 
 		ok( select.is( this.select ), "returns the select element" );
 		strictEqual( bselect.find(".bselect-search").val(), "", "the search text must have no value" );
