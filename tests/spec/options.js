@@ -16,7 +16,7 @@
 	test( "size", function() {
 		this.select.bselect( "option", "size", "mini" );
 
-		strictEqual( this.bselect.find(".btn.btn-mini").length, 2, "should set the caret and the dropdown label with the size class" );
+		ok( this.bselect.is(".bselect-mini"), "should set the caret and the dropdown label with the size class" );
 	});
 
 	test( "showOn", function() {
