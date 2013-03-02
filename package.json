@@ -13,7 +13,6 @@
 		"grunt-contrib-jshint": "*",
 		"grunt-contrib-uglify": "*",
 		"grunt-contrib-less": "*",
-		"grunt-contrib-clean": "*",
-		"grunt-contrib-concat": "*"
+		"grunt-contrib-clean": "*"
 	}
 }

@@ -3,30 +3,16 @@ var fs = require("fs");
 module.exports = function( grunt ) {
 	"use strict";
 
-	var banner = fs.readFileSync( "src/banner.txt", "utf8" );
-
 	grunt.initConfig({
 		pkg: grunt.file.readJSON("package.json"),
-		clean: [ "dist" ],
-		concat: {
-			taskName: {
-				options: {
-					banner: banner
-				},
-				files: {
-					"dist/<%= pkg.name %>.js": [ "src/bselect.js" ],
-					"dist/<%= pkg.name %>.css": [ "dist/<%= pkg.name %>.css" ],
-					"dist/<%= pkg.name %>.min.css": [ "dist/<%= pkg.name %>.min.css" ]
-				}
-			}
+		clean: {
+			pre: [ "dist" ],
+			post: [ "dist/pre" ]
 		},
 		uglify: {
 			dist: {
-				options: {
-					banner: banner
-				},
 				files: {
-					"dist/<%= pkg.name %>.min.js": [ "src/bselect.js" ]
+					"dist/pre/<%= pkg.name %>.min.js": [ "src/bselect.js" ]
 				}
 			}
 		},
@@ -36,7 +22,7 @@ module.exports = function( grunt ) {
 					strictImports: true
 				},
 				files: {
-					"dist/<%= pkg.name %>.css": "src/bselect.less"
+					"dist/pre/<%= pkg.name %>.css": "src/bselect.less"
 				}
 			},
 			production: {
@@ -45,7 +31,7 @@ module.exports = function( grunt ) {
 					yuicompress: true
 				},
 				files: {
-					"dist/<%= pkg.name %>.min.css": "src/bselect.less"
+					"dist/pre/<%= pkg.name %>.min.css": "src/bselect.less"
 				}
 			}
 		},
@@ -53,12 +39,25 @@ module.exports = function( grunt ) {
 			files: [ "tests/index.html" ]
 		},
 		jshint: {
-			files: [ "grunt.js", "src/*.js", "test/**/*.js" ],
+			files: [ "Gruntfile.js", "src/**/*.js", "tests/**/*.js" ],
 			options: {
 				globals: {
 					jQuery: true,
 					document: true
 				}
+			}
+		},
+		copy: {
+			dist: {
+				src: [
+					"README.md",
+					"package.json",
+					"src/i18n/*.js",
+					"src/bselect.js",
+					"dist/pre/*"
+				],
+				strip: /^(src|dist\/pre)/,
+				dest: "dist"
 			}
 		}
 	});
@@ -68,8 +67,8 @@ module.exports = function( grunt ) {
 	grunt.loadNpmTasks("grunt-contrib-qunit");
 	grunt.loadNpmTasks("grunt-contrib-less");
 	grunt.loadNpmTasks("grunt-contrib-clean");
-	grunt.loadNpmTasks("grunt-contrib-concat");
+	grunt.loadTasks("build");
 
 	grunt.registerTask( "test", [ "jshint", "qunit" ] );
-	grunt.registerTask( "default", [ "clean", "jshint", "qunit", "uglify", "less", "concat" ] );
+	grunt.registerTask( "default", [ "clean:pre", "jshint", "qunit", "uglify", "less", "copy", "clean:post" ] );
 };
