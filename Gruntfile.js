@@ -51,7 +51,7 @@ module.exports = function( grunt ) {
 			dist: {
 				src: [
 					"README.md",
-					"package.json",
+					"*.json",
 					"src/i18n/*.js",
 					"src/bselect.js",
 					"dist/pre/*"
