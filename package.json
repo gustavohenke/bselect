@@ -2,11 +2,18 @@
 	"name": "bselect",
 	"title": "BSelect",
 	"version": "0.1.0",
+	"homepage": "http://gustavohenke.github.com/bselect/",
+	"author": {
+		"name": "Gustavo Henke",
+		"email": "gustavo@injoin.com.br"
+	},
 	"devDependencies": {
 		"grunt": ">0.4.x",
 		"grunt-contrib-qunit": "*",
 		"grunt-contrib-jshint": "*",
 		"grunt-contrib-uglify": "*",
-		"grunt-contrib-less": "*"
+		"grunt-contrib-less": "*",
+		"grunt-contrib-clean": "*",
+		"grunt-contrib-concat": "*"
 	}
 }
