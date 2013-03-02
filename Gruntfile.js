@@ -10,6 +10,25 @@ module.exports = function( grunt ) {
 				}
 			}
 		},
+		less: {
+			development: {
+				options: {
+					strictImports: true
+				},
+				files: {
+					"src/bselect.less": "dist/<%= pkg.name %>.css"
+				}
+			},
+			production: {
+				options: {
+					strictImports: true,
+					yuicompress: true
+				},
+				files: {
+					"src/bselect.less": "dist/<%= pkg.name %>.min.css"
+				}
+			}
+		},
 		qunit: {
 			files: [ "tests/index.html" ]
 		},
@@ -27,7 +46,8 @@ module.exports = function( grunt ) {
 	grunt.loadNpmTasks("grunt-contrib-uglify");
 	grunt.loadNpmTasks("grunt-contrib-jshint");
 	grunt.loadNpmTasks("grunt-contrib-qunit");
+	grunt.loadNpmTasks("grunt-contrib-less");
 
 	grunt.registerTask( "test", [ "jshint", "qunit" ] );
-	grunt.registerTask( "default", [ "jshint", "qunit", "uglify" ] );
+	grunt.registerTask( "default", [ "jshint", "qunit", "uglify", "less" ] );
 };

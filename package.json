@@ -6,6 +6,7 @@
 		"grunt": ">0.4.x",
 		"grunt-contrib-qunit": "*",
 		"grunt-contrib-jshint": "*",
-		"grunt-contrib-uglify": "*"
+		"grunt-contrib-uglify": "*",
+		"grunt-contrib-less": "*"
 	}
 }
