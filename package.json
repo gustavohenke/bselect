@@ -1,0 +1,12 @@
+{
+	"name": "bselect",
+	"title": "BSelect",
+	"version": "0.1.0",
+	"devDependencies": {
+		"grunt": ">0.4.x",
+		"grunt-contrib-qunit": "*",
+		"grunt-contrib-jshint": "*",
+		"grunt-contrib-uglify": "*",
+		"grunt-contrib-less": "*"
+	}
+}
