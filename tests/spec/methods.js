@@ -6,6 +6,8 @@
 			this.select = $("#select-1").bselect({
 				animationDuration: 0
 			});
+
+			this.bselect = this.select.bselect("element");
 		},
 		teardown: function() {
 			this.select.bselect("destroy");
@@ -13,9 +15,7 @@
 	});
 
 	test( "element", function() {
-		var bselect = this.select.bselect("element");
-
-		ok( bselect.is(".bselect"), "returns bselect container" );
+		ok( this.bselect.is(".bselect"), "returns bselect container" );
 	});
 
 	test( "option", function() {
@@ -33,10 +33,9 @@
 
 	test( "select", function() {
 		var select = this.select.bselect( "select", 2 ),
-			bselect = this.select.bselect("element"),
-			li = bselect.find("li").eq(2);
+			li = this.bselect.find("li").eq(2);
 
-		ok( select.is(this.select), "returns the select element" );
+		ok( select.is( this.select ), "returns the select element" );
 		ok( li.is(".active"), "the LI index 2 must be .active" );
 
 		this.select.bselect( "select", 4 );
@@ -44,41 +43,37 @@
 	});
 
 	test( "show", function() {
-		var select = this.select.bselect("show"),
-			bselect = this.select.bselect("element");
+		var select = this.select.bselect("show");
 
 		ok( select.is( this.select ), "returns the select element" );
-		ok( bselect.is(".open"), "must be .open" );
-		ok( bselect.find(".bselect-dropdown").is(":visible"), "the list of items should get visible" );
+		ok( this.bselect.is(".open"), "must be .open" );
+		ok( this.bselect.find(".bselect-dropdown").is(":visible"), "the list of items should get visible" );
 	});
 
 	test( "hide", function() {
-		var bselect = this.select.bselect("element");
-		bselect.find(".bselect-dropdown").show();
+		this.bselect.find(".bselect-dropdown").show();
 
 		var select = this.select.bselect("hide");
 
 		ok( select.is( this.select ), "returns the select element" );
-		ok( !bselect.is(".open"), "must not be .open" );
+		ok( !this.bselect.is(".open"), "must not be .open" );
 
-		ok( bselect.find(".bselect-dropdown").is(":hidden"), "the list of items should get hidden" );
+		ok( this.bselect.find(".bselect-dropdown").is(":hidden"), "the list of items should get hidden" );
 	});
 
 	test( "toggle", function() {
-		var select = this.select.bselect("toggle"),
-			bselect = this.select.bselect("element");
+		var select = this.select.bselect("toggle");
 
 		ok( select.is( this.select ), "returns the select element" );
-		ok( bselect.find(".bselect-dropdown").is(":visible"), "'show' must be called when hidden" );
+		ok( this.bselect.find(".bselect-dropdown").is(":visible"), "'show' must be called when hidden" );
 
 		select.bselect("toggle");
-		ok( bselect.find(".bselect-dropdown").is(":hidden"), "'hide' must be called when visible" );
+		ok( this.bselect.find(".bselect-dropdown").is(":hidden"), "'hide' must be called when visible" );
 	});
 
 	test( "search", function() {
 		var select = this.select.bselect( "search", "1" ),
-			bselect = this.select.bselect("element"),
-			LI = bselect.find(".bselect-dropdown").show().find("li");
+			LI = this.bselect.find(".bselect-dropdown").show().find("li");
 
 		ok( select.is( this.select ), "returns the select element" );
 		strictEqual( LI.filter(":visible").length, 1, "shows only the items with the searched term" );
@@ -100,6 +95,17 @@
 		ok( select.is( this.select ), "returns the select element" );
 		strictEqual( bselect.find(".bselect-search").val(), "", "the search text must have no value" );
 		strictEqual( bselect.find("li:visible").length, 3, "all items must be visible" );
+	});
+
+	test( "refresh", function() {
+		var options = this.select.find("option[value!='']"),
+			removed = options.eq( 0 ).remove(),
+			select = this.select.bselect("refresh");
+
+		ok( select.is( this.select ), "returns the select element" );
+		strictEqual( this.bselect.find(".bselect-option").length, this.select.find("option[value!='']").length, "the modifications in the select must be applied in the dropdown" );
+
+		removed.insertBefore( options[ 1 ] );
 	});
 
 })( jQuery );

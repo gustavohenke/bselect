@@ -186,6 +186,7 @@
 			});
 
 			bselect.find(".bselect-option-list").html( html );
+			return this;
 		},
 
 		destroy : function() {
