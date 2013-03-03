@@ -32,10 +32,6 @@
 			return this.data("bselect").element;
 		},
 
-		// Retrieve the currently selected value
-		value: function() {
-			return this.data("bselect").value;
-		},
 		toggle: function( e ) {
 			var bselect = _callMethod( this, "element" );
 
@@ -107,11 +103,11 @@
 				}
 			}
 
-			// Remove the highlighted status from any item
+			// Remove the highlighted status from any previously selected item...
 			bselect.find("li").removeClass("active");
 
-			val = $elem.addClass("active").data("value");
-			this.data("bselect").value = val;
+			// ...and add to the new selected item :)
+			$elem.addClass("active");
 
 			bselect.find(".bselect-label").text( $elem.text() );
 			_callMethod( this, "hide" );
