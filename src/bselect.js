@@ -170,6 +170,24 @@
 			return this;
 		},
 
+		// Refreshes the option list. Useful when new HTML is added
+		refresh: function() {
+			var bselect = _callMethod( this, "element" ),
+				html = "";
+
+			this.find("option").each(function() {
+				if ( !this.value ) {
+					return;
+				}
+
+				html += "<li class='bselect-option' data-value='" + this.value + "'>" +
+							"<a href='#'>" + this.text + "</a>" +
+						"</li>";
+			});
+
+			bselect.find(".bselect-option-list").html( html );
+		},
+
 		destroy : function() {
 			var bselect = _callMethod( this, "element" );
 			this.data( "bselect", null );
@@ -249,18 +267,8 @@
 					"</div>";
 		}
 
-		html += "<ul class='bselect-option-list'>";
-
-		$elem.find("option").each(function() {
-			if ( !this.value ) {
-				return;
-			}
-
-			html += "<li class='bselect-option' data-value='" + this.value + "'>" +
-						"<a href='#'>" + this.text + "</a>" +
-					"</li>";
-		});
-		html += "</ul></div></div>";
+		html += "<ul class='bselect-option-list'></ul>";
+		html += "</div></div>";
 
 		container = $elem.after( html ).next();
 
@@ -271,6 +279,7 @@
 		});
 
 		updateOptions( $elem, $.bselect.defaults, options );
+		_callMethod( $elem, "refresh" );
 
 		label = $("<span />").addClass("bselect-label").text( getPlaceholder( $elem ) );
 		caret = $("<button type='button' />").addClass("bselect-caret").html("<span class='caret'></span>");
