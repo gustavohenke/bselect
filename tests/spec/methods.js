@@ -14,11 +14,11 @@
 		}
 	});
 
-	test( "element", function() {
+	test( "element", 1, function() {
 		ok( this.bselect.is(".bselect"), "returns bselect container" );
 	});
 
-	test( "option", function() {
+	test( "option", 4, function() {
 		var option = this.select.bselect("option");
 
 		ok( $.isPlainObject( option ), "returns hash with all options when no option defined" );
@@ -31,7 +31,7 @@
 		strictEqual( option, 2, "get the current option value" );
 	});
 
-	test( "select", function() {
+	test( "select", 3, function() {
 		var select = this.select.bselect( "select", 2 ),
 			li = this.bselect.find("li").eq(2);
 
@@ -42,7 +42,7 @@
 		ok( li.is(".active"), "if the index is not found, shouldn't do anything" );
 	});
 
-	test( "show", function() {
+	test( "show", 3, function() {
 		var select = this.select.bselect("show");
 
 		ok( select.is( this.select ), "returns the select element" );
@@ -50,7 +50,7 @@
 		ok( this.bselect.find(".bselect-dropdown").is(":visible"), "the list of items should get visible" );
 	});
 
-	test( "hide", function() {
+	test( "hide", 3, function() {
 		this.bselect.find(".bselect-dropdown").show();
 
 		var select = this.select.bselect("hide");
@@ -61,7 +61,7 @@
 		ok( this.bselect.find(".bselect-dropdown").is(":hidden"), "the list of items should get hidden" );
 	});
 
-	test( "toggle", function() {
+	test( "toggle", 3, function() {
 		var select = this.select.bselect("toggle");
 
 		ok( select.is( this.select ), "returns the select element" );
@@ -71,7 +71,7 @@
 		ok( this.bselect.find(".bselect-dropdown").is(":hidden"), "'hide' must be called when visible" );
 	});
 
-	test( "search", function() {
+	test( "search", 4, function() {
 		var select = this.select.bselect( "search", "1" ),
 			LI = this.bselect.find(".bselect-dropdown").show().find("li");
 
@@ -86,7 +86,7 @@
 		strictEqual( LI.filter(":visible").length, 3, "clears the search when no input given" );
 	});
 
-	test( "clearSearch", function() {
+	test( "clearSearch", 3, function() {
 		var select = this.select.bselect( "search", "1" ).bselect("clearSearch"),
 			bselect = this.select.bselect("element");
 
@@ -97,7 +97,7 @@
 		strictEqual( bselect.find("li:visible").length, 3, "all items must be visible" );
 	});
 
-	test( "refresh", function() {
+	test( "refresh", 2, function() {
 		var options = this.select.find("option[value!='']"),
 			removed = options.eq( 0 ).remove(),
 			select = this.select.bselect("refresh");
