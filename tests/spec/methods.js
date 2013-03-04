@@ -31,12 +31,13 @@
 		strictEqual( option, 2, "get the current option value" );
 	});
 
-	test( "select", 3, function() {
+	test( "select", 4, function() {
 		var select = this.select.bselect( "select", 2 ),
-			li = this.bselect.find("li").eq(2);
+			li = this.bselect.find("li").eq( 2 );
 
 		ok( select.is( this.select ), "returns the select element" );
 		ok( li.is(".active"), "the LI index 2 must be .active" );
+		strictEqual( select.val(), li.data("value"), "The original select should have the same value as the option selected (issue #3)" );
 
 		this.select.bselect( "select", 4 );
 		ok( li.is(".active"), "if the index is not found, shouldn't do anything" );
