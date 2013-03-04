@@ -1,5 +1,5 @@
 /*!
- * BSelect v0.2.0 - 2013-03-03
+ * BSelect v0.2.1 - 2013-03-04
  * 
  * Created by Gustavo Henke <gustavo@injoin.com.br>
  * http://gustavohenke.github.com/bselect/
@@ -38,10 +38,6 @@
 			return this.data("bselect").element;
 		},
 
-		// Retrieve the currently selected value
-		value: function() {
-			return this.data("bselect").value;
-		},
 		toggle: function( e ) {
 			var bselect = _callMethod( this, "element" );
 
@@ -113,11 +109,11 @@
 				}
 			}
 
-			// Remove the highlighted status from any item
+			// Remove the highlighted status from any previously selected item...
 			bselect.find("li").removeClass("active");
 
-			val = $elem.addClass("active").data("value");
-			this.data("bselect").value = val;
+			// ...and add to the new selected item :)
+			$elem.addClass("active");
 
 			bselect.find(".bselect-label").text( $elem.text() );
 			_callMethod( this, "hide" );
@@ -173,6 +169,25 @@
 
 			adjustDropdownHeight( bselect );
 
+			return this;
+		},
+
+		// Refreshes the option list. Useful when new HTML is added
+		refresh: function() {
+			var bselect = _callMethod( this, "element" ),
+				html = "";
+
+			this.find("option").each(function() {
+				if ( !this.value ) {
+					return;
+				}
+
+				html += "<li class='bselect-option' data-value='" + this.value + "'>" +
+							"<a href='#'>" + this.text + "</a>" +
+						"</li>";
+			});
+
+			bselect.find(".bselect-option-list").html( html );
 			return this;
 		},
 
@@ -255,18 +270,8 @@
 					"</div>";
 		}
 
-		html += "<ul class='bselect-option-list'>";
-
-		$elem.find("option").each(function() {
-			if ( !this.value ) {
-				return;
-			}
-
-			html += "<li class='bselect-option' data-value='" + this.value + "'>" +
-						"<a href='#'>" + this.text + "</a>" +
-					"</li>";
-		});
-		html += "</ul></div></div>";
+		html += "<ul class='bselect-option-list'></ul>";
+		html += "</div></div>";
 
 		container = $elem.after( html ).next();
 
@@ -277,6 +282,7 @@
 		});
 
 		updateOptions( $elem, $.bselect.defaults, options );
+		_callMethod( $elem, "refresh" );
 
 		label = $("<span />").addClass("bselect-label").text( getPlaceholder( $elem ) );
 		caret = $("<button type='button' />").addClass("bselect-caret").html("<span class='caret'></span>");
