@@ -7,6 +7,7 @@
 
 		<link rel="stylesheet" href="support/styles/bootstrap.css" />
 		<link rel="stylesheet/less" href="src/bselect.less" />
+		<link rel="stylesheet" href="support/styles/prettify.css" />
 	</head>
 	<body>
 		<header class="hero-unit">
@@ -18,9 +19,9 @@
 		<div class="container">
 			<div class="row">
 				<div class="page-header">
-					<h2>Basic select elements</h2>
+					<h2>Basic select element</h2>
 				</div>
-				<div class="span5">
+				<div class="span4">
 					<div class="control-group">
 						<label class="control-label">Turns this:</label>
 						<div class="controls" id="select-basic-container"></div>
@@ -31,10 +32,10 @@
 						<div class="controls" id="bselect-basic-container"></div>
 					</div>
 				</div>
-				<div class="span7">
-					<code>
-						// Code example will be here
-					</code>
+				<div class="span8">
+<pre class="prettyprint linenums">
+$("select").bselect();
+</pre>
 				</div>
 			</div>
 		</div>
@@ -286,6 +287,7 @@
 		<script src="external/less.js"></script>
 		<script src="external/jquery.js"></script>
 		<script src="src/bselect.js"></script>
+		<script src="support/scripts/prettify.js"></script>
 		<script src="support/scripts/example.js"></script>
 	</body>
 </html>

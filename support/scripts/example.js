@@ -10,4 +10,6 @@ $(document).ready(function() {
 			delete localStorage[k];
 		}
 	}
+
+	window.prettyPrint && prettyPrint();
 });
