@@ -104,7 +104,11 @@
 			}
 
 			// Remove the highlighted status from any previously selected item...
-			bselect.find("li").removeClass("active");
+			var index = bselect.find("li").removeClass("active").index( $elem ),
+				option = this.find("option[value!='']").get( index );
+
+			// Trigger the selected event
+			this.trigger( "bselectselect", [ option ] );
 
 			// ...and add to the new selected item :)
 			val = $elem.addClass("active").data("value");
@@ -116,9 +120,7 @@
 			this.val( val );
 
 			// Trigger the selected event
-			if ( typeof options.selected === "function" ) {
-				options.selected.call( this, val, $elem );
-			}
+			this.trigger( "bselectselected", [ val, option ] );
 
 			return this;
 		},
@@ -144,12 +146,16 @@
 				return;
 			}
 
+			var results = $();
+
 			listItems = bselect.find("li").hide();
 			for ( i = 0; i < listItems.length; i++ ) {
 				if ( listItems[ i ].textContent.toLowerCase().indexOf( searched.toLowerCase() ) > -1 ) {
-					$( listItems[ i ] ).show();
+					results.add( $( listItems[ i ] ).show() );
 				}
 			}
+
+			this.trigger( "bselectsearch", [ searched, results ] );
 
 			adjustDropdownHeight( listItems.end() );
 			return this;
@@ -278,6 +284,10 @@
 		updateOptions( $elem, $.bselect.defaults, options );
 		_callMethod( $elem, "refresh" );
 
+		$elem.bind( "bselectselect", options.select );
+		$elem.bind( "bselectselected", options.selected );
+		$elem.bind( "bselectsearch", options.search );
+
 		label = $("<span />").addClass("bselect-label").text( getPlaceholder( $elem ) );
 		caret = $("<button type='button' />").addClass("bselect-caret").html("<span class='caret'></span>");
 		container.prepend( caret ).prepend( label );
@@ -322,6 +332,7 @@
 			minSearchInput: 0,
 			animationDuration: 300,
 			searchInput: true,
+			search: null,
 			select: null,
 			selected: null
 		},
