@@ -1,5 +1,5 @@
 /*!
- * BSelect v0.2.1 - 2013-03-04
+ * BSelect v0.2.2 - 2013-03-04
  * 
  * Created by Gustavo Henke <gustavo@injoin.com.br>
  * http://gustavohenke.github.com/bselect/
@@ -113,7 +113,7 @@
 			bselect.find("li").removeClass("active");
 
 			// ...and add to the new selected item :)
-			$elem.addClass("active");
+			val = $elem.addClass("active").data("value");
 
 			bselect.find(".bselect-label").text( $elem.text() );
 			_callMethod( this, "hide" );
