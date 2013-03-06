@@ -70,6 +70,8 @@
 			searchInput = bselect.find(".bselect-search-input");
 			searchInput.innerWidth( searchInput.parent().width() - searchInput.next().outerWidth() );
 
+			bselect.find(".bselect-search-input").attr( "aria-expanded", "true" );
+
 			return this;
 		},
 		hide: function( clear ) {
@@ -85,6 +87,8 @@
 			if ( clear && options.clearSearchOnExit ) {
 				_callMethod( this, "clearSearch" );
 			}
+
+			bselect.find(".bselect-search-input").attr( "aria-expanded", "false" );
 
 			return this;
 		},
@@ -104,14 +108,19 @@
 			}
 
 			// Remove the highlighted status from any previously selected item...
-			var index = bselect.find("li").removeClass("active").index( $elem ),
-				option = this.find("option[value!='']").get( index );
+			var index = bselect.find("li")
+				.removeClass("active")
+				.attr( "aria-selected", "false" )
+				.index( $elem );
+
+			var option = this.find("option[value!='']").get( index );
 
 			// Trigger the selected event
 			this.trigger( "bselectselect", [ option ] );
 
 			// ...and add to the new selected item :)
-			val = unescape( $elem.addClass("active").data("value") );
+			val = $elem.addClass("active").data("value");
+			$elem.attr( "aria-selected", "true" );
 
 			bselect.find(".bselect-label").text( $elem.text() );
 			_callMethod( this, "hide" );
@@ -175,19 +184,22 @@
 		// Refreshes the option list. Useful when new HTML is added
 		refresh: function() {
 			var bselect = _callMethod( this, "element" ),
-				html = "";
+				optionList = bselect.find(".bselect-option-list").empty();
 
 			this.find("option").each(function() {
 				if ( !this.value ) {
 					return;
 				}
 
-				html += "<li class='bselect-option' data-value='" + escape( this.value ) + "' role='option'>" +
-							"<a href='#'>" + this.text + "</a>" +
-						"</li>";
+				var li = $( "<li class='bselect-option' />" ).attr({
+					role: "option",
+					"aria-selected": "false"
+				}).data( "value", this.value );
+
+				li.append( "<a href='#'>" + this.text + "</a>" );
+				li.appendTo( optionList );
 			});
 
-			bselect.find(".bselect-option-list").html( html );
 			return this;
 		},
 
