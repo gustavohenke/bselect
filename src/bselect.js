@@ -273,8 +273,11 @@
 			$("<input type='text' class='bselect-search-input' />").attr({
 				role: "combobox",
 				"aria-expanded": "false",
-				"aria-autocomplete": "list",
-				"aria-owns": "bselect-option-list-" + id
+				"aria-owns": "bselect-option-list-" + id,
+
+				// The W3C documentation says that role="combobox" should have aria-autocomplete,
+				// but the validator tells us that this is invalid. Very strange.
+				//"aria-autocomplete": "list"
 			}).appendTo( search );
 
 			$("<span class='bselect-search-icon'><i class='icon-search' /></span>").appendTo( search );
