@@ -31,27 +31,29 @@
 		strictEqual( option, 2, "get the current option value" );
 	});
 
-	test( "select", 4, function() {
+	test( "select", 5, function() {
 		var select = this.select.bselect( "select", 2 ),
 			li = this.bselect.find("li").eq( 2 );
 
 		ok( select.is( this.select ), "returns the select element" );
 		ok( li.is(".active"), "the LI index 2 must be .active" );
-		strictEqual( select.val(), li.data("value"), "The original select should have the same value as the option selected (issue #3)" );
+		strictEqual( select.val(), li.data("value"), "the original select should have the same value as the option selected (issue #3)" );
+		strictEqual( li.attr("aria-selected"), "true", "the LI should get aria-selected='true'" );
 
 		this.select.bselect( "select", 4 );
 		ok( li.is(".active"), "if the index is not found, shouldn't do anything" );
 	});
 
-	test( "show", 3, function() {
+	test( "show", 4, function() {
 		var select = this.select.bselect("show");
 
 		ok( select.is( this.select ), "returns the select element" );
 		ok( this.bselect.is(".open"), "must be .open" );
 		ok( this.bselect.find(".bselect-dropdown").is(":visible"), "the list of items should get visible" );
+		strictEqual( this.bselect.find(".bselect-search-input").attr("aria-expanded"), "true", "the search input must get aria-expanded='true'" );
 	});
 
-	test( "hide", 3, function() {
+	test( "hide", 4, function() {
 		this.bselect.find(".bselect-dropdown").show();
 
 		var select = this.select.bselect("hide");
@@ -60,6 +62,7 @@
 		ok( !this.bselect.is(".open"), "must not be .open" );
 
 		ok( this.bselect.find(".bselect-dropdown").is(":hidden"), "the list of items should get hidden" );
+		strictEqual( this.bselect.find(".bselect-search-input").attr("aria-expanded"), "false", "the search input must get aria-expanded='false'" );
 	});
 
 	test( "toggle", 3, function() {

@@ -70,6 +70,8 @@
 			searchInput = bselect.find(".bselect-search-input");
 			searchInput.innerWidth( searchInput.parent().width() - searchInput.next().outerWidth() );
 
+			bselect.find(".bselect-search-input").attr( "aria-expanded", "true" );
+
 			return this;
 		},
 		hide: function( clear ) {
@@ -85,6 +87,8 @@
 			if ( clear && options.clearSearchOnExit ) {
 				_callMethod( this, "clearSearch" );
 			}
+
+			bselect.find(".bselect-search-input").attr( "aria-expanded", "false" );
 
 			return this;
 		},
@@ -104,14 +108,19 @@
 			}
 
 			// Remove the highlighted status from any previously selected item...
-			var index = bselect.find("li").removeClass("active").index( $elem ),
-				option = this.find("option[value!='']").get( index );
+			var index = bselect.find("li")
+				.removeClass("active")
+				.attr( "aria-selected", "false" )
+				.index( $elem );
+
+			var option = this.find("option[value!='']").get( index );
 
 			// Trigger the selected event
 			this.trigger( "bselectselect", [ option ] );
 
 			// ...and add to the new selected item :)
 			val = $elem.addClass("active").data("value");
+			$elem.attr( "aria-selected", "true" );
 
 			bselect.find(".bselect-label").text( $elem.text() );
 			_callMethod( this, "hide" );
@@ -175,19 +184,22 @@
 		// Refreshes the option list. Useful when new HTML is added
 		refresh: function() {
 			var bselect = _callMethod( this, "element" ),
-				html = "";
+				optionList = bselect.find(".bselect-option-list").empty();
 
 			this.find("option").each(function() {
 				if ( !this.value ) {
 					return;
 				}
 
-				html += "<li class='bselect-option' data-value='" + this.value + "'>" +
-							"<a href='#'>" + this.text + "</a>" +
-						"</li>";
+				var li = $( "<li class='bselect-option' />" ).attr({
+					role: "option",
+					"aria-selected": "false"
+				}).data( "value", this.value );
+
+				li.append( "<a href='#'>" + this.text + "</a>" );
+				li.appendTo( optionList );
 			});
 
-			bselect.find(".bselect-option-list").html( html );
 			return this;
 		},
 
@@ -256,24 +268,41 @@
 
 	// Run all the setup stuff
 	function setup( elem, options ) {
-		var caret, label, container, html;
+		var caret, label, container, id, dropdown;
 		var $elem = $( elem );
 
 		// First of, let's build the base HTML of BSelect
-		html = "<div class='bselect' id='bselect-" + ( ++elements ) + "'>";
-		html += "<div class='bselect-dropdown'>";
+		id = ++elements
+		container = $( "<div class='bselect' />", {
+			id: "bselect-" + id
+		});
+
+		dropdown = $("<div class='bselect-dropdown' />");
 
 		if ( options.searchInput === true ) {
-			html += "<div class='bselect-search'>" +
-						"<input type='text' class='bselect-search-input' />" +
-						"<span class='bselect-search-icon'><i class='icon-search'></i></span>" +
-					"</div>";
+			var search = $("<div class='bselect-search' />");
+			
+			$("<input type='text' class='bselect-search-input' />").attr({
+				role: "combobox",
+				"aria-expanded": "false",
+				"aria-owns": "bselect-option-list-" + id,
+
+				// The W3C documentation says that role="combobox" should have aria-autocomplete,
+				// but the validator tells us that this is invalid. Very strange.
+				//"aria-autocomplete": "list"
+			}).appendTo( search );
+
+			$("<span class='bselect-search-icon'><i class='icon-search' /></span>").appendTo( search );
+
+			search.appendTo( dropdown );
 		}
 
-		html += "<ul class='bselect-option-list'></ul>";
-		html += "</div></div>";
+		$("<ul class='bselect-option-list' />").attr({
+			id: "bselect-option-list-" + id,
+			role: "listbox"
+		}).appendTo( dropdown );
 
-		container = $elem.after( html ).next();
+		container.append( dropdown ).insertAfter( $elem );
 
 		// Save some precious data in the original select now, as we have the container in the DOM
 		$elem.data( "bselect", {
