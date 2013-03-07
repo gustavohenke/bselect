@@ -99,12 +99,18 @@
 	}
 
 	> .bselect-search-input {
+		position: relative;
 		padding: 4px 6px;
 		margin: 0;
 		background: @inputBackground;
 		border: 1px solid @inputBorder;
 		#bselect-mixins > .border-radius(@baseBorderRadius 0 0 @baseBorderRadius);
 		#bselect-mixins > .box-shadow(inset 0 1px 1px rgba(0, 0, 0, .075));
+
+		// Make input on top when focused so blue border and shadow always show
+		&:focus {
+			z-index: 2;
+		}
 	}
 
 	> .bselect-search-icon {
