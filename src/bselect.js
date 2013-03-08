@@ -272,7 +272,7 @@
 		var $elem = $( elem );
 
 		// First of, let's build the base HTML of BSelect
-		id = ++elements
+		id = ++elements;
 		container = $( "<div class='bselect' />", {
 			id: "bselect-" + id
 		});
@@ -285,7 +285,7 @@
 			$("<input type='text' class='bselect-search-input' />").attr({
 				role: "combobox",
 				"aria-expanded": "false",
-				"aria-owns": "bselect-option-list-" + id,
+				"aria-owns": "bselect-option-list-" + id
 
 				// The W3C documentation says that role="combobox" should have aria-autocomplete,
 				// but the validator tells us that this is invalid. Very strange.
