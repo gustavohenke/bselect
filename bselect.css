@@ -1,5 +1,5 @@
 /*!
- * BSelect v0.2.2 - 2013-03-04
+ * BSelect v0.2.3 - 2013-03-08
  * 
  * Created by Gustavo Henke <gustavo@injoin.com.br>
  * http://gustavohenke.github.com/bselect/
@@ -116,6 +116,7 @@
   vertical-align: middle;
 }
 .bselect-search > .bselect-search-input {
+  position: relative;
   padding: 4px 6px;
   margin: 0;
   background: #ffffff;
@@ -126,6 +127,9 @@
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+}
+.bselect-search > .bselect-search-input:focus {
+  z-index: 2;
 }
 .bselect-search > .bselect-search-icon {
   width: auto;

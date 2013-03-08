@@ -1,5 +1,5 @@
 /*!
- * BSelect v0.2.2 - 2013-03-04
+ * BSelect v0.2.3 - 2013-03-08
  * 
  * Created by Gustavo Henke <gustavo@injoin.com.br>
  * http://gustavohenke.github.com/bselect/
@@ -76,6 +76,8 @@
 			searchInput = bselect.find(".bselect-search-input");
 			searchInput.innerWidth( searchInput.parent().width() - searchInput.next().outerWidth() );
 
+			bselect.find(".bselect-search-input").attr( "aria-expanded", "true" );
+
 			return this;
 		},
 		hide: function( clear ) {
@@ -91,6 +93,8 @@
 			if ( clear && options.clearSearchOnExit ) {
 				_callMethod( this, "clearSearch" );
 			}
+
+			bselect.find(".bselect-search-input").attr( "aria-expanded", "false" );
 
 			return this;
 		},
@@ -110,10 +114,19 @@
 			}
 
 			// Remove the highlighted status from any previously selected item...
-			bselect.find("li").removeClass("active");
+			var index = bselect.find("li")
+				.removeClass("active")
+				.attr( "aria-selected", "false" )
+				.index( $elem );
+
+			var option = this.find("option[value!='']").get( index );
+
+			// Trigger the selected event
+			this.trigger( "bselectselect", [ option ] );
 
 			// ...and add to the new selected item :)
 			val = $elem.addClass("active").data("value");
+			$elem.attr( "aria-selected", "true" );
 
 			bselect.find(".bselect-label").text( $elem.text() );
 			_callMethod( this, "hide" );
@@ -122,9 +135,7 @@
 			this.val( val );
 
 			// Trigger the selected event
-			if ( typeof options.selected === "function" ) {
-				options.selected.call( this, val, $elem );
-			}
+			this.trigger( "bselectselected", [ val, option ] );
 
 			return this;
 		},
@@ -150,12 +161,16 @@
 				return;
 			}
 
+			var results = $();
+
 			listItems = bselect.find("li").hide();
 			for ( i = 0; i < listItems.length; i++ ) {
 				if ( listItems[ i ].textContent.toLowerCase().indexOf( searched.toLowerCase() ) > -1 ) {
-					$( listItems[ i ] ).show();
+					results.add( $( listItems[ i ] ).show() );
 				}
 			}
+
+			this.trigger( "bselectsearch", [ searched, results ] );
 
 			adjustDropdownHeight( listItems.end() );
 			return this;
@@ -175,19 +190,22 @@
 		// Refreshes the option list. Useful when new HTML is added
 		refresh: function() {
 			var bselect = _callMethod( this, "element" ),
-				html = "";
+				optionList = bselect.find(".bselect-option-list").empty();
 
 			this.find("option").each(function() {
 				if ( !this.value ) {
 					return;
 				}
 
-				html += "<li class='bselect-option' data-value='" + this.value + "'>" +
-							"<a href='#'>" + this.text + "</a>" +
-						"</li>";
+				var li = $( "<li class='bselect-option' />" ).attr({
+					role: "option",
+					"aria-selected": "false"
+				}).data( "value", this.value );
+
+				li.append( "<a href='#'>" + this.text + "</a>" );
+				li.appendTo( optionList );
 			});
 
-			bselect.find(".bselect-option-list").html( html );
 			return this;
 		},
 
@@ -256,24 +274,41 @@
 
 	// Run all the setup stuff
 	function setup( elem, options ) {
-		var caret, label, container, html;
+		var caret, label, container, id, dropdown;
 		var $elem = $( elem );
 
 		// First of, let's build the base HTML of BSelect
-		html = "<div class='bselect' id='bselect-" + ( ++elements ) + "'>";
-		html += "<div class='bselect-dropdown'>";
+		id = ++elements;
+		container = $( "<div class='bselect' />", {
+			id: "bselect-" + id
+		});
+
+		dropdown = $("<div class='bselect-dropdown' />");
 
 		if ( options.searchInput === true ) {
-			html += "<div class='bselect-search'>" +
-						"<input type='text' class='bselect-search-input' />" +
-						"<span class='bselect-search-icon'><i class='icon-search'></i></span>" +
-					"</div>";
+			var search = $("<div class='bselect-search' />");
+			
+			$("<input type='text' class='bselect-search-input' />").attr({
+				role: "combobox",
+				"aria-expanded": "false",
+				"aria-owns": "bselect-option-list-" + id
+
+				// The W3C documentation says that role="combobox" should have aria-autocomplete,
+				// but the validator tells us that this is invalid. Very strange.
+				//"aria-autocomplete": "list"
+			}).appendTo( search );
+
+			$("<span class='bselect-search-icon'><i class='icon-search' /></span>").appendTo( search );
+
+			search.appendTo( dropdown );
 		}
 
-		html += "<ul class='bselect-option-list'></ul>";
-		html += "</div></div>";
+		$("<ul class='bselect-option-list' />").attr({
+			id: "bselect-option-list-" + id,
+			role: "listbox"
+		}).appendTo( dropdown );
 
-		container = $elem.after( html ).next();
+		container.append( dropdown ).insertAfter( $elem );
 
 		// Save some precious data in the original select now, as we have the container in the DOM
 		$elem.data( "bselect", {
@@ -283,6 +318,10 @@
 
 		updateOptions( $elem, $.bselect.defaults, options );
 		_callMethod( $elem, "refresh" );
+
+		$elem.bind( "bselectselect", options.select );
+		$elem.bind( "bselectselected", options.selected );
+		$elem.bind( "bselectsearch", options.search );
 
 		label = $("<span />").addClass("bselect-label").text( getPlaceholder( $elem ) );
 		caret = $("<button type='button' />").addClass("bselect-caret").html("<span class='caret'></span>");
@@ -306,13 +345,20 @@
 	}
 
 	$.fn.bselect = function( arg ) {
-		if ( typeof arg === "string" && this[ 0 ] && $.isPlainObject( $( this[ 0 ] ).data("bselect") ) ) {
-			if ( methods[ arg ] !== undefined ) {
+		if ( typeof arg === "string" && this[ 0 ] ) {
+			if ( $.isPlainObject( $( this[ 0 ] ).data("bselect") ) && methods[ arg ] !== undefined ) {
 				return methods[ arg ].apply( $( this[ 0 ] ), Array.prototype.slice.call( arguments, 1 ) );
 			}
+
+			return this;
 		}
 
 		return this.each(function() {
+			// #8 - avoid creating bselect again on the same element
+			if ( $.isPlainObject( $( this ).data("bselect") ) ) {
+				return;
+			}
+
 			arg = $.isPlainObject( arg ) ? arg : {};
 			arg = $.extend( {}, $.bselect.defaults, arg );
 
@@ -328,6 +374,7 @@
 			minSearchInput: 0,
 			animationDuration: 300,
 			searchInput: true,
+			search: null,
 			select: null,
 			selected: null
 		},
