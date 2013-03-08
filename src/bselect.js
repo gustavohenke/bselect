@@ -339,13 +339,20 @@
 	}
 
 	$.fn.bselect = function( arg ) {
-		if ( typeof arg === "string" && this[ 0 ] && $.isPlainObject( $( this[ 0 ] ).data("bselect") ) ) {
-			if ( methods[ arg ] !== undefined ) {
+		if ( typeof arg === "string" && this[ 0 ] ) {
+			if ( $.isPlainObject( $( this[ 0 ] ).data("bselect") ) && methods[ arg ] !== undefined ) {
 				return methods[ arg ].apply( $( this[ 0 ] ), Array.prototype.slice.call( arguments, 1 ) );
 			}
+
+			return this;
 		}
 
 		return this.each(function() {
+			// #8 - avoid creating bselect again on the same element
+			if ( $.isPlainObject( $( this ).data("bselect") ) ) {
+				return;
+			}
+
 			arg = $.isPlainObject( arg ) ? arg : {};
 			arg = $.extend( {}, $.bselect.defaults, arg );
 
