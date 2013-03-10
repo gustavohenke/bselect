@@ -184,7 +184,9 @@
 		// Refreshes the option list. Useful when new HTML is added
 		refresh: function() {
 			var bselect = _callMethod( this, "element" ),
-				optionList = bselect.find(".bselect-option-list").empty();
+				optionList = bselect.find(".bselect-option-list").empty(),
+				mapping = {},
+				i = 0;
 
 			this.find("option").each(function() {
 				if ( !this.value ) {
@@ -196,10 +198,15 @@
 					"aria-selected": "false"
 				}).data( "value", this.value );
 
+				mapping[ this.value ] = i;
+
 				li.append( "<a href='#'>" + this.text + "</a>" );
 				li.appendTo( optionList );
+
+				i++;
 			});
 
+			this.data("bselect").itemsMap = mapping;
 			return this;
 		},
 
@@ -336,6 +343,12 @@
 		container.find(".bselect-search-input").keyup( $.proxy( methods.search, $elem ) );
 		container.on( "click", ".bselect-option", $.proxy( methods.select, $elem ) );
 		container.on( "click", ".bselect-caret, .bselect-label", $.proxy( methods.toggle, $elem ) );
+
+		// Issue #6 - Listen to the change event and update the selected value
+		$elem.change(function() {
+			var index = $elem.data("bselect").itemsMap[ this.value ];
+			_callMethod( $elem, "select", index );
+		});
 	}
 
 	$.fn.bselect = function( arg ) {
