@@ -1,6 +1,8 @@
 @import "variables.less";
 @import "mixins.less";
 
+@bselectItemPadding: 5px 20px 5px 15px;
+
 .bselect {
 	position: relative;
 	display: inline-block;
@@ -125,6 +127,13 @@
 	}
 }
 
+.bselect-message {
+	display: none;
+	padding: @bselectItemPadding;
+	line-height: @baseLineHeight;
+	cursor: default;
+}
+
 .bselect-option-list {
 	line-height: @baseLineHeight;
 	width: 100%;
@@ -137,7 +146,7 @@
 	> li {
 		> a {
 			display: block;
-			padding: 5px 20px 5px 15px;
+			padding: @bselectItemPadding;
 			color: @dropdownLinkColor;
 			text-decoration: none;
 

@@ -160,8 +160,14 @@
 			listItems = bselect.find("li").hide();
 			for ( i = 0; i < listItems.length; i++ ) {
 				if ( listItems[ i ].textContent.toLowerCase().indexOf( searched.toLowerCase() ) > -1 ) {
-					results.add( $( listItems[ i ] ).show() );
+					results = results.add( $( listItems[ i ] ).show() );
 				}
+			}
+
+			if ( results.length === 0 ) {
+				showNoOptionsAvailable( this );
+			} else {
+				bselect.find(".bselect-message").hide();
 			}
 
 			this.trigger( "bselectsearch", [ searched, results ] );
@@ -173,8 +179,9 @@
 		clearSearch: function() {
 			var bselect = _callMethod( this, "element" );
 
-			bselect.find(".bselect-search").val("");
+			bselect.find(".bselect-search-input").val("");
 			bselect.find("li").show();
+			bselect.find(".bselect-message").hide();
 
 			adjustDropdownHeight( bselect );
 
@@ -205,6 +212,10 @@
 
 				i++;
 			});
+
+			if ( i === 0 ) {
+				showNoOptionsAvailable( this );
+			}
 
 			this.data("bselect").itemsMap = mapping;
 			return this;
@@ -273,6 +284,12 @@
 		});
 	}
 
+	// Show the 'no options available' message
+	function showNoOptionsAvailable( $elem ) {
+		var bselect = _callMethod( $elem, "element" );
+		bselect.find(".bselect-message").text( $.bselect.i18n.noOptionsAvailable ).show();
+	}
+
 	// Run all the setup stuff
 	function setup( elem, options ) {
 		var caret, label, container, id, dropdown;
@@ -303,6 +320,8 @@
 
 			search.appendTo( dropdown );
 		}
+
+		$("<div class='bselect-message' role='status' />").appendTo( dropdown );
 
 		$("<ul class='bselect-option-list' />").attr({
 			id: "bselect-option-list-" + id,
@@ -386,7 +405,8 @@
 			selected: null
 		},
 		i18n: {
-			selectAnOption: "Select an option"
+			selectAnOption: "Select an option",
+			noOptionsAvailable: "No options available."
 		}
 	};
 

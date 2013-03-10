@@ -75,7 +75,7 @@
 		ok( this.bselect.find(".bselect-dropdown").is(":hidden"), "'hide' must be called when visible" );
 	});
 
-	test( "search", 4, function() {
+	test( "search", 5, function() {
 		var select = this.select.bselect( "search", "1" ),
 			LI = this.bselect.find(".bselect-dropdown").show().find("li");
 
@@ -88,6 +88,9 @@
 
 		this.select.bselect( "search", "" );
 		strictEqual( LI.filter(":visible").length, 3, "clears the search when no input given" );
+
+		this.select.bselect( "search", "blablabla" );
+		ok( this.bselect.find(".bselect-message").is(":visible"), "should show a message telling that no results were returned (issue #7)" );
 	});
 
 	test( "clearSearch", 3, function() {
@@ -97,7 +100,7 @@
 		bselect.find(".bselect-dropdown").show();
 
 		ok( select.is( this.select ), "returns the select element" );
-		strictEqual( bselect.find(".bselect-search").val(), "", "the search text must have no value" );
+		strictEqual( bselect.find(".bselect-search-input").val(), "", "the search text must have no value" );
 		strictEqual( bselect.find("li:visible").length, 3, "all items must be visible" );
 	});
 

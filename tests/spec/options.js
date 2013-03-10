@@ -56,7 +56,7 @@
 		this.select.bselect( "option", "clearSearchOnExit", true );
 		this.select.bselect("hide");
 
-		strictEqual( this.bselect.find(".bselect-search").val(), "", "when the value is true, should clear the input after exit" );
+		strictEqual( this.bselect.find(".bselect-search-input").val(), "", "when the value is true, should clear the input after exit" );
 
 		this.select.bselect("show");
 		strictEqual( this.bselect.find(".bselect-option:visible").length, 3, "when the value is true, should show other options after exit" );
