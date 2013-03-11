@@ -10,7 +10,7 @@
 		}
 	});
 
-	test( "General", function() {
+	test( "general", 1, function() {
 		this.select.bselect();
 		this.select.bselect();
 
@@ -18,5 +18,17 @@
 
 		this.select.bselect("destroy");
 	});
+
+	test( "instantiation", 2, function() {
+		this.select.val("option1").bselect({
+			animationDuration: 0
+		});
+		this.bselect = this.select.bselect("element");
+
+		strictEqual( this.bselect.find(".bselect-option.active").length, 1, "should select the current option on instantiation (issue #11)" );
+
+		$("<label for='select-1' />").appendTo("body").trigger("click");
+		ok( this.bselect.is(".open"), "when the original select label is clicked, should show the dropdown (issue #9)" );
+	})
 
 })( jQuery );

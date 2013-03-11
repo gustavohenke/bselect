@@ -369,7 +369,7 @@
 		$elem.hide();
 
 		// Event binding
-		$( document ).click(function( e ) {
+		$( window ).click(function( e ) {
 			if ( container.find(".bselect-dropdown").is(":visible") && !$( ".bselect-dropdown, .bselect-dropdown *", container ).find( e.target ).length ) {
 				_callMethod( $elem, "hide" );
 			}
@@ -384,6 +384,11 @@
 			var index = $elem.data("bselect").itemsMap[ this.value ];
 			_callMethod( $elem, "select", index );
 		}).trigger("change.bselect");
+
+		$( document ).on("click", "label[for='" + $elem.attr("id") + "']", function( e ) {
+			_callMethod( $elem, "show" );
+			return false;
+		});
 	}
 
 	$.fn.bselect = function( arg ) {
