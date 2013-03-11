@@ -53,12 +53,27 @@
 			return this;
 		},
 		show: function() {
-			var searchInput;
+			var searchInput, activeItem;
 			var bselect = _callMethod( this, "element" ),
 				dropdown = bselect.find(".bselect-dropdown");
 
 			dropdown.css( "left", "-9999em" ).show();
 			adjustDropdownHeight( bselect );
+
+			// Adjust the scrolling to match the current select option position - issue #10
+			activeItem = bselect.find(".bselect-option.active");
+			if ( activeItem.length ) {
+				var optionList = bselect.find(".bselect-option-list"),
+					activeItemPos = activeItem.position().top,
+					optionListPos = optionList.position().top;
+
+				if ( activeItemPos - optionListPos < optionList.height() ) {
+					optionList.scrollTop( 0 );
+				} else {
+					optionList.scrollTop( activeItemPos - optionListPos );
+				}
+			}
+
 			dropdown.hide().css( "left", "auto" );
 
 			dropdown.slideDown( _callMethod( this, "option", "animationDuration" ) );
