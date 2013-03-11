@@ -29,6 +29,6 @@
 
 		$("<label for='select-1' />").appendTo("body").trigger("click");
 		ok( this.bselect.is(".open"), "when the original select label is clicked, should show the dropdown (issue #9)" );
-	})
+	});
 
 })( jQuery );
