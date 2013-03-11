@@ -150,14 +150,18 @@
 		padding: @bselectItemPadding;
 		color: @dropdownLinkColor;
 		text-decoration: none;
+	}
 
-		&:focus,
-		&:hover {
-			outline: 0;
-			color: @dropdownLinkColorHover;
-			text-shadow: 0 1px 0 rgba(100, 100, 100, 0.5);
-			#bselect-mixins > .vertical-gradient(@dropdownLinkBackgroundHover, darken(@dropdownLinkBackgroundHover, 5%));
-		}
+	&:focus, a:focus {
+		outline: 0;
+	}
+
+	&:focus a,
+	a:focus,
+	a:hover {
+		color: @dropdownLinkColorHover;
+		text-shadow: 0 1px 0 rgba(100, 100, 100, 0.5);
+		#bselect-mixins > .vertical-gradient(@dropdownLinkBackgroundHover, darken(@dropdownLinkBackgroundHover, 5%));
 	}
 
 	&.active > a,

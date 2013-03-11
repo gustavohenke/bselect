@@ -217,6 +217,7 @@
 
 				var li = $( "<li class='bselect-option' />" ).attr({
 					role: "option",
+					tabindex: 2,
 					"aria-selected": "false"
 				}).data( "value", this.value );
 
@@ -324,6 +325,7 @@
 			
 			$("<input type='text' class='bselect-search-input' />").attr({
 				role: "combobox",
+				tabindex: 1,
 				"aria-expanded": "false",
 				"aria-owns": "bselect-option-list-" + id
 
