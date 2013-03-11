@@ -52,7 +52,10 @@
 		ok( this.bselect.is(".open"), "must be .open" );
 		ok( this.bselect.find(".bselect-dropdown").is(":visible"), "the list of items should get visible" );
 		strictEqual( input.attr("aria-expanded"), "true", "the search input must get aria-expanded='true'" );
-		ok( input.is(":focus"), "the search input must be focused" );
+
+		// Droped below checking because it couldn't succeed in PhantomJS
+		//ok( input.is(":focus"), "the search input must be focused" );
+		ok( input.is( document.activeElement ), "the search input must be focused" );
 	});
 
 	test( "hide", 4, function() {

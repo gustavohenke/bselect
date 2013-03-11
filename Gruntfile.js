@@ -5,12 +5,12 @@ module.exports = function( grunt ) {
 		pkg: grunt.file.readJSON("package.json"),
 		clean: {
 			pre: [ "dist" ],
-			post: [ "dist/pre" ]
+			post: [ "dist/*.less", "dist/*.js", "dist/*.css" ]
 		},
 		uglify: {
 			dist: {
 				files: {
-					"dist/pre/<%= pkg.name %>.min.js": [ "src/bselect.js" ]
+					"dist/js/<%= pkg.name %>.min.js": [ "src/bselect.js" ]
 				}
 			}
 		},
@@ -20,7 +20,7 @@ module.exports = function( grunt ) {
 					strictImports: true
 				},
 				files: {
-					"dist/pre/<%= pkg.name %>.css": "src/bselect.less"
+					"dist/css/<%= pkg.name %>.css": "src/bselect.less"
 				}
 			},
 			production: {
@@ -29,7 +29,7 @@ module.exports = function( grunt ) {
 					yuicompress: true
 				},
 				files: {
-					"dist/pre/<%= pkg.name %>.min.css": "src/bselect.less"
+					"dist/css/<%= pkg.name %>.min.css": "src/bselect.less"
 				}
 			}
 		},
@@ -46,15 +46,21 @@ module.exports = function( grunt ) {
 			}
 		},
 		copy: {
-			dist: {
+			first: {
 				src: [
 					"README.md",
 					"*.json",
 					"src/i18n/*.js",
 					"src/bselect.js",
-					"dist/pre/*"
+					"src/*.less"
 				],
-				strip: /^(src|dist\/pre)/,
+				renames: {
+					"dist/bselect.less":   "less/bselect.less",
+					"dist/mixins.less":    "less/mixins.less",
+					"dist/variables.less": "less/variables.less",
+					"dist/bselect.js":     "js/bselect.js"
+				},
+				strip: /^src/,
 				dest: "dist"
 			}
 		}

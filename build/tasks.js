@@ -13,7 +13,7 @@ module.exports = function( grunt ) {
 		}
 		function copyFile( src, dest ) {
 			var options = {};
-			if ( /(js|css)$/.test( src ) ) {
+			if ( /(js|css|less)$/.test( src ) ) {
 				options.process = bannerify;
 			} else if ( /json$/.test( src ) ) {
 				options.process = replaceVersion;
