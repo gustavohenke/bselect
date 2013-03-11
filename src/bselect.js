@@ -82,7 +82,7 @@
 			bselect.addClass("open");
 
 			// Adjust the size of the search input to match the container inner width
-			searchInput = bselect.find(".bselect-search-input");
+			searchInput = bselect.find(".bselect-search-input").focus();
 			searchInput.innerWidth( searchInput.parent().width() - searchInput.next().outerWidth() );
 
 			bselect.find(".bselect-search-input").attr( "aria-expanded", "true" );

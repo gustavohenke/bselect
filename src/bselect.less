@@ -142,25 +142,28 @@
 	list-style: none;
 	overflow-y: auto;
 	overflow-x: hidden;
+}
 
-	> li {
-		> a {
-			display: block;
-			padding: @bselectItemPadding;
-			color: @dropdownLinkColor;
-			text-decoration: none;
+.bselect-option {
+	> a {
+		display: block;
+		padding: @bselectItemPadding;
+		color: @dropdownLinkColor;
+		text-decoration: none;
 
-			&:hover {
-				color: @dropdownLinkColorHover;
-				#bselect-mixins > .vertical-gradient(@dropdownLinkBackgroundHover, darken(@dropdownLinkBackgroundHover, 5%));
-			}
+		&:focus,
+		&:hover {
+			outline: 0;
+			color: @dropdownLinkColorHover;
+			text-shadow: 0 1px 0 rgba(100, 100, 100, 0.5);
+			#bselect-mixins > .vertical-gradient(@dropdownLinkBackgroundHover, darken(@dropdownLinkBackgroundHover, 5%));
 		}
+	}
 
-		&.active > a,
-		&.active > a:hover {
-			color: @dropdownLinkColorActive;
-			#bselect-mixins > .vertical-gradient(@dropdownLinkBackgroundActive, darken(@dropdownLinkBackgroundActive, 5%));
-		}
+	&.active > a,
+	&.active > a:hover {
+		color: @dropdownLinkColorActive;
+		#bselect-mixins > .vertical-gradient(@dropdownLinkBackgroundActive, darken(@dropdownLinkBackgroundActive, 5%));
 	}
 }
 
