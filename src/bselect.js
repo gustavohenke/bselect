@@ -242,6 +242,7 @@
 
 			bselect.remove();
 			this.show();
+			return this;
 		}
 	};
 
@@ -379,10 +380,10 @@
 		container.on( "click", ".bselect-caret, .bselect-label", $.proxy( methods.toggle, $elem ) );
 
 		// Issue #6 - Listen to the change event and update the selected value
-		$elem.change(function() {
+		$elem.bind( "change.bselect", function() {
 			var index = $elem.data("bselect").itemsMap[ this.value ];
 			_callMethod( $elem, "select", index );
-		});
+		}).trigger("change.bselect");
 	}
 
 	$.fn.bselect = function( arg ) {

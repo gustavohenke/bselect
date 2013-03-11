@@ -1,10 +1,10 @@
 (function( $ ) {
 
 	$( document ).ready(function() {
-		var countries = $(".countries").remove();
-		$("#select-basic-container").append( countries.clone().show() );
+		var select = $(".languages").remove();
+		$("#select-basic-container1").append( select.clone().show() );
 		
-		$("#bselect-basic-container").append( countries ).find(".countries").bselect();
+		$("#bselect-basic-container1").append( select ).find(".languages").bselect();
 
 		// Clean up the mess with imported files
 		if ( window.localStorage !== undefined ) {

@@ -3,7 +3,9 @@
 
 	module( "Events", {
 		setup: function() {
-			this.select = $("#select-2").bselect({
+			// It's important to call .val("") here. That's because of issue #11.
+			// If we didn't, then the tests for the search event would call the assertions from the select evento also.
+			this.select = $("#select-2").val("").bselect({
 				animationDuration: 0
 			});
 		},
@@ -34,7 +36,7 @@
 
 	test( "search", 3, function() {
 		this.select.bind( "bselectsearch", function( e, searchedText, results ) {
-			ok( true, "should call bselectsearch" );
+			ok( true, "should call 'search'" );
 			strictEqual( searchedText, "1", "second arg should be the searched text" );
 			ok( results.jquery, "third arg should be the results as a jQuery collection" );
 

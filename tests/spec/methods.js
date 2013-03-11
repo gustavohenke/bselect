@@ -115,4 +115,13 @@
 		removed.insertBefore( options[ 1 ] );
 	});
 
+	test( "destroy", 4, function() {
+		var select = this.select.bselect("destroy");
+
+		ok( select.is( this.select ), "returns the select element" );
+		equal( select.data("bselect"), null, "has no bselect data" );
+		ok( select.is(":visible"), "is shown after destroying" );
+		strictEqual( this.bselect.has("body").length, 0, "has no .bselect related element" );
+	});
+
 })( jQuery );

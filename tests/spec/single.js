@@ -11,7 +11,7 @@
 		}
 	});
 
-	test( "markup structure", 5, function() {
+	test( "markup structure", 6, function() {
 		strictEqual( this.bselect.length, 1, "bselect exists" );
 		ok( this.bselect.is(".bselect"), "bselect is .bselect" );
 		strictEqual( this.bselect.find(".bselect-option").length, 3, "has the same number of items than the original select" );
@@ -21,8 +21,12 @@
 		this.select.bselect("refresh").bselect("show");
 
 		ok( this.bselect.find(".bselect-message").is(":visible"), "should show a message telling that no options exist (issue #7)" );
-
 		options.appendTo( this.select );
+
+		this.select.bselect("destroy").val("option1").bselect();
+		this.bselect = this.select.bselect("element");
+
+		strictEqual( this.bselect.find(".bselect-option.active").length, 1, "should select the current option on instantiation (issue #11)" );
 	});
 
 	test( "native events", 1, function() {
