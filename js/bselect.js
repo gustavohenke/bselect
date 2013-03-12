@@ -1,5 +1,11 @@
 /*!
- * BSelect v0.2.3 - 2013-03-08
+ * BSelect v0.3.0 - 2013-03-12
+ * 
+ * Created by Gustavo Henke <gustavo@injoin.com.br>
+ * http://gustavohenke.github.com/bselect/
+ */
+/*!
+ * BSelect v0.3.0 - 2013-03-12
  * 
  * Created by Gustavo Henke <gustavo@injoin.com.br>
  * http://gustavohenke.github.com/bselect/
@@ -59,12 +65,27 @@
 			return this;
 		},
 		show: function() {
-			var searchInput;
+			var searchInput, activeItem;
 			var bselect = _callMethod( this, "element" ),
 				dropdown = bselect.find(".bselect-dropdown");
 
 			dropdown.css( "left", "-9999em" ).show();
 			adjustDropdownHeight( bselect );
+
+			// Adjust the scrolling to match the current select option position - issue #10
+			activeItem = bselect.find(".bselect-option.active");
+			if ( activeItem.length ) {
+				var optionList = bselect.find(".bselect-option-list"),
+					activeItemPos = activeItem.position().top,
+					optionListPos = optionList.position().top;
+
+				if ( activeItemPos - optionListPos < optionList.height() ) {
+					optionList.scrollTop( 0 );
+				} else {
+					optionList.scrollTop( activeItemPos - optionListPos );
+				}
+			}
+
 			dropdown.hide().css( "left", "auto" );
 
 			dropdown.slideDown( _callMethod( this, "option", "animationDuration" ) );
@@ -73,7 +94,7 @@
 			bselect.addClass("open");
 
 			// Adjust the size of the search input to match the container inner width
-			searchInput = bselect.find(".bselect-search-input");
+			searchInput = bselect.find(".bselect-search-input").focus();
 			searchInput.innerWidth( searchInput.parent().width() - searchInput.next().outerWidth() );
 
 			bselect.find(".bselect-search-input").attr( "aria-expanded", "true" );
@@ -166,8 +187,14 @@
 			listItems = bselect.find("li").hide();
 			for ( i = 0; i < listItems.length; i++ ) {
 				if ( listItems[ i ].textContent.toLowerCase().indexOf( searched.toLowerCase() ) > -1 ) {
-					results.add( $( listItems[ i ] ).show() );
+					results = results.add( $( listItems[ i ] ).show() );
 				}
+			}
+
+			if ( results.length === 0 ) {
+				showNoOptionsAvailable( this );
+			} else {
+				bselect.find(".bselect-message").hide();
 			}
 
 			this.trigger( "bselectsearch", [ searched, results ] );
@@ -179,8 +206,9 @@
 		clearSearch: function() {
 			var bselect = _callMethod( this, "element" );
 
-			bselect.find(".bselect-search").val("");
+			bselect.find(".bselect-search-input").val("");
 			bselect.find("li").show();
+			bselect.find(".bselect-message").hide();
 
 			adjustDropdownHeight( bselect );
 
@@ -190,7 +218,9 @@
 		// Refreshes the option list. Useful when new HTML is added
 		refresh: function() {
 			var bselect = _callMethod( this, "element" ),
-				optionList = bselect.find(".bselect-option-list").empty();
+				optionList = bselect.find(".bselect-option-list").empty(),
+				mapping = {},
+				i = 0;
 
 			this.find("option").each(function() {
 				if ( !this.value ) {
@@ -199,13 +229,23 @@
 
 				var li = $( "<li class='bselect-option' />" ).attr({
 					role: "option",
+					tabindex: 2,
 					"aria-selected": "false"
 				}).data( "value", this.value );
 
+				mapping[ this.value ] = i;
+
 				li.append( "<a href='#'>" + this.text + "</a>" );
 				li.appendTo( optionList );
+
+				i++;
 			});
 
+			if ( i === 0 ) {
+				showNoOptionsAvailable( this );
+			}
+
+			this.data("bselect").itemsMap = mapping;
 			return this;
 		},
 
@@ -215,6 +255,7 @@
 
 			bselect.remove();
 			this.show();
+			return this;
 		}
 	};
 
@@ -272,6 +313,53 @@
 		});
 	}
 
+	// Show the 'no options available' message
+	function showNoOptionsAvailable( $elem ) {
+		var bselect = _callMethod( $elem, "element" );
+		bselect.find(".bselect-message").text( $.bselect.i18n.noOptionsAvailable ).show();
+	}
+
+	/* Handle keypress on the search input and on the options.
+	 * On the search input: arrow up goes to the last visible item, while arrow down does the opposite.
+	 * In the options, arrows are used to navigate and enter to select. */
+	function handleKeypress( e ) {
+		if ( e.keyCode !== 38 && e.keyCode !== 40 && e.keyCode !== 13 ) {
+			return;
+		}
+
+		var $this = $( this ),
+			isInput = $this.is( ".bselect-search-input" );
+
+		switch ( e.keyCode ) {
+			// UP
+			case 38:
+				if ( isInput ) {
+					$( e.delegateTarget ).find(".bselect-option:visible:last").focus();
+				} else {
+					$this.prevAll(":visible").eq( 0 ).focus();
+				}
+				break;
+
+			// DOWN
+			case 40:
+				if ( isInput ) {
+					$( e.delegateTarget ).find(".bselect-option:visible:first").focus();
+				} else {
+					$this.nextAll(":visible").eq( 0 ).focus();
+				}
+				break;
+
+			// ENTER
+			case 13:
+				if ( !isInput ) {
+					$this.trigger("click");
+				}
+				break;
+		}
+
+		return false;
+	}
+
 	// Run all the setup stuff
 	function setup( elem, options ) {
 		var caret, label, container, id, dropdown;
@@ -285,11 +373,13 @@
 
 		dropdown = $("<div class='bselect-dropdown' />");
 
+		// Configure the search input
 		if ( options.searchInput === true ) {
 			var search = $("<div class='bselect-search' />");
 			
 			$("<input type='text' class='bselect-search-input' />").attr({
 				role: "combobox",
+				tabindex: 1,
 				"aria-expanded": "false",
 				"aria-owns": "bselect-option-list-" + id
 
@@ -302,6 +392,8 @@
 
 			search.appendTo( dropdown );
 		}
+
+		$("<div class='bselect-message' role='status' />").appendTo( dropdown );
 
 		$("<ul class='bselect-option-list' />").attr({
 			id: "bselect-option-list-" + id,
@@ -333,7 +425,7 @@
 		$elem.hide();
 
 		// Event binding
-		$( document ).click(function( e ) {
+		$( window ).click(function( e ) {
 			if ( container.find(".bselect-dropdown").is(":visible") && !$( ".bselect-dropdown, .bselect-dropdown *", container ).find( e.target ).length ) {
 				_callMethod( $elem, "hide" );
 			}
@@ -342,6 +434,18 @@
 		container.find(".bselect-search-input").keyup( $.proxy( methods.search, $elem ) );
 		container.on( "click", ".bselect-option", $.proxy( methods.select, $elem ) );
 		container.on( "click", ".bselect-caret, .bselect-label", $.proxy( methods.toggle, $elem ) );
+		container.on( "keypress", ".bselect-option, .bselect-search-input", handleKeypress );
+
+		// Issue #6 - Listen to the change event and update the selected value
+		$elem.bind( "change.bselect", function() {
+			var index = $elem.data("bselect").itemsMap[ this.value ];
+			_callMethod( $elem, "select", index );
+		}).trigger("change.bselect");
+
+		$( document ).on("click", "label[for='" + $elem.attr("id") + "']", function( e ) {
+			_callMethod( $elem, "show" );
+			return false;
+		});
 	}
 
 	$.fn.bselect = function( arg ) {
@@ -379,7 +483,8 @@
 			selected: null
 		},
 		i18n: {
-			selectAnOption: "Select an option"
+			selectAnOption: "Select an option",
+			noOptionsAvailable: "No options available."
 		}
 	};
 
