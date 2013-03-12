@@ -317,6 +317,7 @@
 
 		var $this = $( this ),
 			isInput = $this.is( ".bselect-search-input" );
+
 		switch ( e.keyCode ) {
 			// UP
 			case 38:
