@@ -152,8 +152,12 @@
 		text-decoration: none;
 	}
 
-	&:focus, a:focus {
-		outline: 0;
+	&:focus {
+		outline: 0; // No outline directly in the LI
+	}
+
+	&:focus a, a:focus {
+		outline: 1px dotted #000;
 	}
 
 	&:focus a,

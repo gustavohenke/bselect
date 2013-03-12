@@ -31,4 +31,54 @@
 		ok( this.bselect.is(".open"), "when the original select label is clicked, should show the dropdown (issue #9)" );
 	});
 
+	test( "accessibility", 6, function() {
+		var input, e, options;
+
+		this.bselect = this.select.bselect({
+			animationDuration: 0
+		}).bselect("element");
+
+		this.select.bselect("show");
+		input = this.bselect.find(".bselect-search-input");
+		options = this.bselect.find(".bselect-option:visible");
+
+		// Droped below checking because it couldn't succeed in PhantomJS
+		// ok( input.is(":focus"), "the search input must be focused" );
+		ok( input.is( document.activeElement ), "the search input must be focused on show" );
+
+		// Search - arrow up
+		e = $.Event("keypress");
+		e.keyCode = 38;
+		input.trigger( e );
+
+		ok( options.last().is( document.activeElement ), "up arrow in the search focuses the last visible option" );
+
+		// Search - arrow down
+		e = $.Event("keypress");
+		e.keyCode = 40;
+		input.focus().trigger( e );
+
+		ok( options.eq( 0 ).is( document.activeElement ), "down arrow in the search focuses the first visible option" );
+
+		// Option - arrow down
+		e = $.Event("keypress");
+		e.keyCode = 40;
+		options.eq( 0 ).trigger( e );
+
+		ok( options.eq( 1 ).is( document.activeElement ), "down arrow in a option focuses the next visible option" );
+
+		// Option - arrow up
+		e = $.Event("keypress");
+		e.keyCode = 38;
+		options.eq( 1 ).trigger( e );
+
+		ok( options.eq( 0 ).is( document.activeElement ), "up arrow in a option focuses the previous visible option" );
+
+		e = $.Event("keypress");
+		e.keyCode = 13;
+		options.eq( 0 ).trigger( e );
+
+		strictEqual( this.bselect.find(".bselect-label").text(), options.eq( 0 ).text(), "enter selects the current option" );
+	});
+
 })( jQuery );

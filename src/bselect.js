@@ -307,6 +307,46 @@
 		bselect.find(".bselect-message").text( $.bselect.i18n.noOptionsAvailable ).show();
 	}
 
+	/* Handle keypress on the search input and on the options.
+	 * On the search input: arrow up goes to the last visible item, while arrow down does the opposite.
+	 * In the options, arrows are used to navigate and enter to select. */
+	function handleKeypress( e ) {
+		if ( e.keyCode !== 38 && e.keyCode !== 40 && e.keyCode !== 13 ) {
+			return;
+		}
+
+		var $this = $( this ),
+			isInput = $this.is( ".bselect-search-input" );
+		switch ( e.keyCode ) {
+			// UP
+			case 38:
+				if ( isInput ) {
+					$( e.delegateTarget ).find(".bselect-option:visible:last").focus();
+				} else {
+					$this.prevAll(":visible").eq( 0 ).focus();
+				}
+				break;
+
+			// DOWN
+			case 40:
+				if ( isInput ) {
+					$( e.delegateTarget ).find(".bselect-option:visible:first").focus();
+				} else {
+					$this.nextAll(":visible").eq( 0 ).focus();
+				}
+				break;
+
+			// ENTER
+			case 13:
+				if ( !isInput ) {
+					$this.trigger("click");
+				}
+				break;
+		}
+
+		return false;
+	}
+
 	// Run all the setup stuff
 	function setup( elem, options ) {
 		var caret, label, container, id, dropdown;
@@ -320,6 +360,7 @@
 
 		dropdown = $("<div class='bselect-dropdown' />");
 
+		// Configure the search input
 		if ( options.searchInput === true ) {
 			var search = $("<div class='bselect-search' />");
 			
@@ -380,6 +421,7 @@
 		container.find(".bselect-search-input").keyup( $.proxy( methods.search, $elem ) );
 		container.on( "click", ".bselect-option", $.proxy( methods.select, $elem ) );
 		container.on( "click", ".bselect-caret, .bselect-label", $.proxy( methods.toggle, $elem ) );
+		container.on( "keypress", ".bselect-option, .bselect-search-input", handleKeypress );
 
 		// Issue #6 - Listen to the change event and update the selected value
 		$elem.bind( "change.bselect", function() {

@@ -44,7 +44,7 @@
 		ok( li.is(".active"), "if the index is not found, shouldn't do anything" );
 	});
 
-	test( "show", 5, function() {
+	test( "show", 4, function() {
 		var select = this.select.bselect("show"),
 			input = this.bselect.find(".bselect-search-input");
 
@@ -52,10 +52,6 @@
 		ok( this.bselect.is(".open"), "must be .open" );
 		ok( this.bselect.find(".bselect-dropdown").is(":visible"), "the list of items should get visible" );
 		strictEqual( input.attr("aria-expanded"), "true", "the search input must get aria-expanded='true'" );
-
-		// Droped below checking because it couldn't succeed in PhantomJS
-		//ok( input.is(":focus"), "the search input must be focused" );
-		ok( input.is( document.activeElement ), "the search input must be focused" );
 	});
 
 	test( "hide", 4, function() {
