@@ -1,4 +1,5 @@
 (function( $ ) {
+	"use strict";
 
 	$( document ).ready(function() {
 		$("#bselect-basic1").bselect();

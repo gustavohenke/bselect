@@ -47,34 +47,34 @@
 		ok( input.is( document.activeElement ), "the search input must be focused on show" );
 
 		// Search - arrow up
-		e = $.Event("keypress");
+		e = $.Event("keydown");
 		e.keyCode = 38;
 		input.trigger( e );
 
 		ok( options.last().is( document.activeElement ), "up arrow in the search focuses the last visible option" );
 
 		// Search - arrow down
-		e = $.Event("keypress");
+		e = $.Event("keydown");
 		e.keyCode = 40;
 		input.focus().trigger( e );
 
 		ok( options.eq( 0 ).is( document.activeElement ), "down arrow in the search focuses the first visible option" );
 
 		// Option - arrow down
-		e = $.Event("keypress");
+		e = $.Event("keydown");
 		e.keyCode = 40;
 		options.eq( 0 ).trigger( e );
 
 		ok( options.eq( 1 ).is( document.activeElement ), "down arrow in a option focuses the next visible option" );
 
 		// Option - arrow up
-		e = $.Event("keypress");
+		e = $.Event("keydown");
 		e.keyCode = 38;
 		options.eq( 1 ).trigger( e );
 
 		ok( options.eq( 0 ).is( document.activeElement ), "up arrow in a option focuses the previous visible option" );
 
-		e = $.Event("keypress");
+		e = $.Event("keydown");
 		e.keyCode = 13;
 		options.eq( 0 ).trigger( e );
 

@@ -422,7 +422,7 @@
 		container.find(".bselect-search-input").keyup( $.proxy( methods.search, $elem ) );
 		container.on( "click", ".bselect-option", $.proxy( methods.select, $elem ) );
 		container.on( "click", ".bselect-caret, .bselect-label", $.proxy( methods.toggle, $elem ) );
-		container.on( "keypress", ".bselect-option, .bselect-search-input", handleKeypress );
+		container.on( "keydown", ".bselect-option, .bselect-search-input", handleKeypress );
 
 		// Issue #6 - Listen to the change event and update the selected value
 		$elem.bind( "change.bselect", function() {
