@@ -9,11 +9,16 @@ module.exports = function( grunt ) {
 			return source.replace( /@VERSION/g, grunt.config("pkg.version") );
 		}
 		function bannerify( source ) {
+			// If already bannerified, don't do that again
+			if ( /^\/\*!/.test( source ) ) {
+				return source;
+			}
+
 			return grunt.template.process( banner, grunt.config() ) + source;
 		}
 		function copyFile( src, dest ) {
 			var options = {};
-			if ( /(js|css|less)$/.test( src ) ) {
+			if ( /\.(js|css|less)$/.test( src ) ) {
 				options.process = bannerify;
 			} else if ( /json$/.test( src ) ) {
 				options.process = replaceVersion;
@@ -26,14 +31,17 @@ module.exports = function( grunt ) {
 			strip = this.data.strip,
 			renameCount = 0,
 			fileName;
+
 		if ( typeof strip === "string" ) {
 			strip = new RegExp( "^" + grunt.template.process( strip, grunt.config() ).replace( /[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&" ) );
 		}
+
 		files.forEach(function( fileName ) {
 			var targetFile = strip ? fileName.replace( strip, "" ) : fileName;
 			copyFile( fileName, target + targetFile );
 		});
 		grunt.log.writeln( "Copied " + files.length + " files." );
+
 		for ( fileName in this.data.renames ) {
 			renameCount += 1;
 			copyFile( fileName, target + grunt.template.process( this.data.renames[ fileName ], grunt.config() ) );

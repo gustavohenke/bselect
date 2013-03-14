@@ -47,13 +47,14 @@ module.exports = function( grunt ) {
 			}
 		},
 		copy: {
-			first: {
+			dist: {
 				src: [
 					"README.md",
 					"*.json",
 					"src/i18n/*.js",
 					"src/bselect.js",
-					"src/*.less"
+					"src/*.less",
+					"dist/css/*.css"
 				],
 				renames: {
 					"dist/bselect.less":   "less/bselect.less",
@@ -61,7 +62,7 @@ module.exports = function( grunt ) {
 					"dist/variables.less": "less/variables.less",
 					"dist/bselect.js":     "js/bselect.js"
 				},
-				strip: /^src/,
+				strip: /^src|dist/,
 				dest: "dist"
 			}
 		}
