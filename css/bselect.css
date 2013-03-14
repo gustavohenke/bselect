@@ -1,3 +1,9 @@
+/*!
+ * BSelect v0.3.1 - 2013-03-13
+ * 
+ * Created by Gustavo Henke <gustavo@injoin.com.br>
+ * http://gustavohenke.github.com/bselect/
+ */
 .bselect {
   position: relative;
   display: inline-block;
@@ -161,9 +167,9 @@
 .bselect-option:focus {
   outline: 0;
 }
-.bselect-option:focus a,
-.bselect-option a:focus {
-  outline: 1px dotted #000;
+.bselect-option:focus a {
+  outline: thin dotted #333;
+  outline-offset: -2px;
 }
 .bselect-option:focus a,
 .bselect-option a:focus,

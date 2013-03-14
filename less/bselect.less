@@ -1,11 +1,5 @@
 /*!
- * BSelect v0.3.0 - 2013-03-12
- * 
- * Created by Gustavo Henke <gustavo@injoin.com.br>
- * http://gustavohenke.github.com/bselect/
- */
-/*!
- * BSelect v0.3.0 - 2013-03-12
+ * BSelect v0.3.1 - 2013-03-13
  * 
  * Created by Gustavo Henke <gustavo@injoin.com.br>
  * http://gustavohenke.github.com/bselect/
@@ -168,8 +162,9 @@
 		outline: 0; // No outline directly in the LI
 	}
 
-	&:focus a, a:focus {
-		outline: 1px dotted #000;
+	&:focus a {
+		outline: thin dotted #333;
+		outline-offset: -2px;
 	}
 
 	&:focus a,

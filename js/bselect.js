@@ -1,11 +1,5 @@
 /*!
- * BSelect v0.3.0 - 2013-03-12
- * 
- * Created by Gustavo Henke <gustavo@injoin.com.br>
- * http://gustavohenke.github.com/bselect/
- */
-/*!
- * BSelect v0.3.0 - 2013-03-12
+ * BSelect v0.3.1 - 2013-03-13
  * 
  * Created by Gustavo Henke <gustavo@injoin.com.br>
  * http://gustavohenke.github.com/bselect/
@@ -434,7 +428,7 @@
 		container.find(".bselect-search-input").keyup( $.proxy( methods.search, $elem ) );
 		container.on( "click", ".bselect-option", $.proxy( methods.select, $elem ) );
 		container.on( "click", ".bselect-caret, .bselect-label", $.proxy( methods.toggle, $elem ) );
-		container.on( "keypress", ".bselect-option, .bselect-search-input", handleKeypress );
+		container.on( "keydown", ".bselect-option, .bselect-search-input", handleKeypress );
 
 		// Issue #6 - Listen to the change event and update the selected value
 		$elem.bind( "change.bselect", function() {

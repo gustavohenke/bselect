@@ -1,6 +1,6 @@
 {
 	"name":			"bselect",
-	"version":		"0.3.0",
+	"version":		"0.3.1",
 	"main":			["./bselect.js", "./bselect.css"],
 	"dependencies":	{
 		"jquery":		"~1.8.0"
