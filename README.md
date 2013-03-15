@@ -8,6 +8,7 @@ The select decorator component that was missing for Twitter Bootstrap.
 * Doesn't require any Bootstrap CSS or JS to work
 * Tested via [QUnit](http://qunitjs.com/)
 * Support for internationalization
+* ARIA ready
 * __Lightweight__
  * `.js`: only 1.1 KB minified and gzipped, 10.5 KB uncompressed
  * `.css`: 1.3 KB minified and gzipped, 6.3 KB uncompressed 
