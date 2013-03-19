@@ -152,6 +152,10 @@
 		text-decoration: none;
 	}
 
+	&.grouped {
+		padding-left: 15px;
+	}
+
 	&:focus {
 		outline: 0; // No outline directly in the LI
 	}
@@ -174,6 +178,12 @@
 		color: @dropdownLinkColorActive;
 		#bselect-mixins > .vertical-gradient(@dropdownLinkBackgroundActive, darken(@dropdownLinkBackgroundActive, 5%));
 	}
+}
+
+.bselect-option-group {
+	padding: @bselectItemPadding;
+	font-weight: bold;
+	cursor: default;
 }
 
 .bselect.bselect-mini {

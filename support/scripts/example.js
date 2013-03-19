@@ -2,7 +2,7 @@
 	"use strict";
 
 	$( document ).ready(function() {
-		$("#bselect-basic1").bselect();
+		$("[id^='bselect-']").bselect();
 
 		// Clean up the mess with imported files
 		if ( window.localStorage !== undefined ) {

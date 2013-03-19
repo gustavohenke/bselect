@@ -210,22 +210,33 @@
 				mapping = {},
 				i = 0;
 
-			this.find("option").each(function() {
-				if ( !this.value ) {
+			this.find("option, > optgroup").each(function() {
+				var classes, li;
+				var isOption = $( this ).is("option");
+
+				if ( isOption && !this.value ) {
 					return;
 				}
 
-				var li = $( "<li class='bselect-option' />" ).attr({
+				classes = isOption ? "bselect-option" + ( $( this ).closest("optgroup").length ? " grouped" : "" ) : "bselect-option-group";
+				li = $( "<li />" ).attr({
+					"class": classes,
+					// While there aren't roles for optgroup, we'll stick with the role option.
 					role: "option",
-					tabindex: 2,
+					tabindex: isOption ? 2 : -1,
 					"aria-selected": "false"
-				}).data( "value", this.value );
+				});
 
-				mapping[ this.value ] = i;
+				if ( isOption ) {
+					li.data( "value", this.value );
+					mapping[ this.value ] = i;
+					
+					li.html( "<a href='#'>" + this.text + "</a>" );
+				} else {
+					li.text( this.label );
+				}
 
-				li.append( "<a href='#'>" + this.text + "</a>" );
 				li.appendTo( optionList );
-
 				i++;
 			});
 
@@ -324,7 +335,7 @@
 				if ( isInput ) {
 					$( e.delegateTarget ).find(".bselect-option:visible:last").focus();
 				} else {
-					$this.prevAll(":visible").eq( 0 ).focus();
+					$this.prevAll(".bselect-option:visible").eq( 0 ).focus();
 				}
 				break;
 
@@ -333,7 +344,7 @@
 				if ( isInput ) {
 					$( e.delegateTarget ).find(".bselect-option:visible:first").focus();
 				} else {
-					$this.nextAll(":visible").eq( 0 ).focus();
+					$this.nextAll(".bselect-option:visible").eq( 0 ).focus();
 				}
 				break;
 
