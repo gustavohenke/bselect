@@ -10,8 +10,8 @@ The select decorator component that was missing for Twitter Bootstrap.
 * Support for internationalization
 * ARIA ready
 * __Lightweight__
- * `.js`: only 1.1 KB minified and gzipped, 10.5 KB uncompressed
- * `.css`: 1.3 KB minified and gzipped, 6.3 KB uncompressed 
+ * `.js`: about 1 KB minified and gzipped, ~11 KB uncompressed
+ * `.css`: about 1 KB minified and gzipped, ~6 KB uncompressed
 
 ## Installation
 * Installation via Bower: `bower install bselect`
@@ -33,6 +33,9 @@ $("select").bselect({ searchInput : false });
 // Update the component - make the animation slower
 $("select").bselect("option", "animationDuration", 600);
 ```
+
+## Bugs
+If you've found any problems, [don't be aware to tell me!](https://github.com/gustavohenke/bselect/issues/new)
 
 ## License
 MIT
