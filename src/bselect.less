@@ -3,6 +3,9 @@
 
 @bselectItemPadding: 5px 20px 5px 15px;
 
+// Root element styles
+// --------------------------------
+
 .bselect {
 	position: relative;
 	display: inline-block;
@@ -20,6 +23,10 @@
 	}
 }
 
+// Label/caret
+// --------------------------------
+
+// Label and caret have basically the same styles
 .bselect-label,
 .bselect-caret {
 	position: relative;
@@ -72,6 +79,21 @@
 	}
 }
 
+// Styles for the disabled bselect
+.bselect.disabled .bselect-label,
+.bselect.disabled .bselect-caret {
+	background-image: none;
+	cursor: not-allowed;
+	#bselect-mixins > .transition(none);
+	#bselect-mixins > .box-shadow(none);
+
+	&:hover {
+		background-color: mix(@btnBackground, @btnBackgroundHighlight, 60%);
+	}
+}
+
+// Dropdown
+// --------------------------------
 .bselect-dropdown {
 	position: absolute;
 	top: 100%;
@@ -106,6 +128,7 @@
 		margin: 0;
 		background: @inputBackground;
 		border: 1px solid @inputBorder;
+		cursor: text;
 		#bselect-mixins > .border-radius(@baseBorderRadius 0 0 @baseBorderRadius);
 		#bselect-mixins > .box-shadow(inset 0 1px 1px rgba(0, 0, 0, .075));
 
@@ -144,6 +167,8 @@
 	overflow-x: hidden;
 }
 
+// Dropdown items
+// --------------------------------
 .bselect-option {
 	> a {
 		display: block;
@@ -153,6 +178,7 @@
 	}
 
 	&.grouped {
+		// Should have this extra padding, to visually indicate that it's grouped
 		padding-left: 15px;
 	}
 
@@ -186,6 +212,11 @@
 	cursor: default;
 }
 
+
+// Sizes
+// --------------------------------
+
+// Mini
 .bselect.bselect-mini {
 	.bselect-label,
 	.bselect-caret {
@@ -199,6 +230,7 @@
 	}
 }
 
+// Small
 .bselect.bselect-small {
 	.bselect-label,
 	.bselect-caret {
@@ -212,6 +244,7 @@
 	}
 }
 
+// Large
 .bselect.bselect-large {
 	.bselect-label,
 	.bselect-caret {
@@ -231,6 +264,7 @@
 	}
 }
 
+// Shared styles across all sizes
 .bselect {
 	&.bselect-mini,
 	&.bselect-small,

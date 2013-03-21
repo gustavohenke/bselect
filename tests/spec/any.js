@@ -1,13 +1,13 @@
 (function( $, undefined ) {
 	"use strict";
 
+	// In this module, be sure to call the destroy method in each test!
+
 	module( "Any select", {
 		setup: function() {
 			this.select = $("#select-1");
 		},
-		teardown: function() {
-
-		}
+		teardown: function() { }
 	});
 
 	test( "general", 1, function() {
@@ -15,11 +15,10 @@
 		this.select.bselect();
 
 		strictEqual( $(".bselect").length, 1, "shouldn't create more than one instance per select (issue #8)" );
-
 		this.select.bselect("destroy");
 	});
 
-	test( "instantiation", 2, function() {
+	test( "instantiation", 3, function() {
 		this.select.val("option1").bselect({
 			animationDuration: 0
 		});
@@ -29,6 +28,11 @@
 
 		$("<label for='select-1' />").appendTo("body").trigger("click");
 		ok( this.bselect.is(".open"), "when the original select label is clicked, should show the dropdown (issue #9)" );
+		this.select.bselect("destroy");
+
+		this.bselect = this.select.prop( "disabled", true ).bselect().bselect("element");
+		ok( this.bselect.is(".disabled"), "should replicate the original select disabled attribute" );
+		this.select.bselect("destroy").prop( "disabled", false );
 	});
 
 	test( "accessibility", 6, function() {
@@ -79,6 +83,8 @@
 		options.eq( 0 ).trigger( e );
 
 		strictEqual( this.bselect.find(".bselect-label").text(), options.eq( 0 ).text(), "enter selects the current option" );
+
+		this.select.bselect("destroy");
 	});
 
 })( jQuery );

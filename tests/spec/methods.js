@@ -116,6 +116,22 @@
 		removed.insertBefore( options[ 1 ] );
 	});
 
+	test( "disable", 3, function() {
+		var select = this.select.bselect("disable");
+
+		ok( select.is( this.select ), "returns the select element" );
+		ok( select.prop("disabled"), "the select has disabled attribute as true" );
+		ok( this.bselect.is(".disabled"), "should be .disabled" );
+	});
+
+	test( "enable", 3, function() {
+		var select = this.select.bselect("disable").bselect("enable");
+
+		ok( select.is( this.select ), "returns the select element" );
+		ok( !select.prop("disabled"), "the select has disabled attribute as false" );
+		ok( !this.bselect.is(".disabled"), "should not be .disabled" );
+	});
+
 	test( "destroy", 4, function() {
 		var select = this.select.bselect("destroy");
 

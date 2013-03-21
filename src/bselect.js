@@ -1,7 +1,9 @@
 (function( $, undefined ) {
 	"use strict";
 
-	var elements = 0;
+	var elements = 0,
+		bootstrapButtonSizes = [ "mini", "small", "large" ];
+
 	var methods = {
 		// Get/set options of the component
 		option: function( option, value ) {
@@ -33,6 +35,10 @@
 		},
 
 		toggle: function( e ) {
+			if ( this[ 0 ].disabled ) {
+				return this;
+			}
+
 			var bselect = _callMethod( this, "element" );
 
 			if ( e instanceof $.Event ) {
@@ -53,6 +59,10 @@
 			return this;
 		},
 		show: function() {
+			if ( this[ 0 ].disabled ) {
+				return this;
+			}
+
 			var searchInput, activeItem;
 			var bselect = _callMethod( this, "element" ),
 				dropdown = bselect.find(".bselect-dropdown");
@@ -90,6 +100,10 @@
 			return this;
 		},
 		hide: function( clear ) {
+			if ( this[ 0 ].disabled ) {
+				return this;
+			}
+
 			var options = _callMethod( this, "option" ),
 				bselect = _callMethod( this, "element" );
 
@@ -151,6 +165,10 @@
 
 		// Searches every item in the list for the given text
 		search: function( arg ) {
+			if ( this[ 0 ].disabled ) {
+				return this;
+			}
+
 			var listItems, i;
 			var options = _callMethod( this, "option" ),
 				searched = arg instanceof $.Event ? arg.target.value : arg,
@@ -203,12 +221,34 @@
 			return this;
 		},
 
+		// Disable the bselect instance
+		disable: function() {
+			if ( !this[ 0 ].disabled ) {
+				_callMethod( this, "element" ).addClass("disabled");
+				this.prop( "disabled", true );
+			}
+
+			return this;
+		},
+
+		// Enable the bselect instance
+		enable: function() {
+			if ( this[ 0 ].disabled ) {
+				_callMethod( this, "element" ).removeClass("disabled");
+				this.prop( "disabled", false );
+			}
+
+			return this;
+		},
+
 		// Refreshes the option list. Useful when new HTML is added
 		refresh: function() {
 			var bselect = _callMethod( this, "element" ),
 				optionList = bselect.find(".bselect-option-list").empty(),
 				mapping = {},
 				i = 0;
+
+			bselect.toggleClass( "disabled", this.prop("disabled") );
 
 			this.find("option, > optgroup").each(function() {
 				var classes, li;
@@ -257,8 +297,6 @@
 			return this;
 		}
 	};
-
-	var bootstrapButtonSizes = [ "mini", "small", "large" ];
 
 	// Helper function that will call an BSelect method in the context of $elem
 	function _callMethod( $elem, method ) {
