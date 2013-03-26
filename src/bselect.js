@@ -2,13 +2,14 @@
 	"use strict";
 
 	var elements = 0,
+		dataName = "bselect",
 		instances = [],
 		bootstrapButtonSizes = [ "mini", "small", "large" ];
 
 	var methods = {
 		// Get/set options of the component
 		option: function( option, value ) {
-			var curr = this.data("bselect").options || {},
+			var curr = this.data( dataName ).options || {},
 				prev = $.extend( {}, curr );
 
 			if ( typeof option === "string" && option[ 0 ] !== "_" ) {
@@ -24,7 +25,7 @@
 				$.extend( curr, option );
 				updateOptions( this, prev, curr );
 
-				this.data("bselect").options = curr;
+				this.data( dataName ).options = curr;
 			}
 
 			return curr;
@@ -32,7 +33,7 @@
 
 		// Retrieve the BSelect container
 		element: function() {
-			return this.data("bselect").element;
+			return this.data( dataName ).element;
 		},
 
 		toggle: function( e ) {
@@ -60,7 +61,7 @@
 			return this;
 		},
 		show: function() {
-			var data = this.data("bselect");
+			var data = this.data( dataName );
 			if ( this[ 0 ].disabled || data.open ) {
 				return this;
 			}
@@ -89,7 +90,7 @@
 			dropdown.hide().css( "left", "auto" );
 
 			dropdown.slideDown( _callMethod( this, "option", "animationDuration" ) );
-			this.data( "bselect", $.extend( data, {
+			this.data( dataName, $.extend( data, {
 				open: true
 			}));
 
@@ -105,7 +106,7 @@
 			return this;
 		},
 		hide: function( clear ) {
-			var data = this.data("bselect");
+			var data = this.data( dataName );
 			if ( this[ 0 ].disabled || !data.open ) {
 				return this;
 			}
@@ -115,7 +116,7 @@
 
 			clear = clear === undefined ? true : clear;
 
-			this.data( "bselect", $.extend( data, {
+			this.data( dataName, $.extend( data, {
 				open: false
 			}));
 
@@ -293,14 +294,13 @@
 				showNoOptionsAvailable( this );
 			}
 
-			this.data("bselect").itemsMap = mapping;
+			this.data( dataName ).itemsMap = mapping;
 			return this;
 		},
 
-		destroy : function() {
-			var index;
+		destroy: function() {
 			var bselect = _callMethod( this, "element" );
-			this.data( "bselect", null );
+			this.data( dataName, null );
 
 			// Remove our cached thing
 			instances.splice( instances.indexOf( this ), 1 );
@@ -347,10 +347,7 @@
 		$.each( prev, function(key, val) {
 			if ( curr[ key ] !== val ) {
 				if ( key === "size" ) {
-					var sizes;
-					var i = 0;
-
-					sizes = $.map( bootstrapButtonSizes.slice( 0 ), function( size ) {
+					var sizes = $.map( bootstrapButtonSizes.slice( 0 ), function( size ) {
 						return "bselect-" + size;
 					}).join(" ");
 
@@ -453,7 +450,7 @@
 		container.append( dropdown ).insertAfter( $elem );
 
 		// Save some precious data in the original select now, as we have the container in the DOM
-		$elem.data( "bselect", {
+		$elem.data( dataName, {
 			options: options,
 			element: container,
 			open: false
@@ -486,19 +483,21 @@
 
 		// Issue #6 - Listen to the change event and update the selected value
 		$elem.bind( "change.bselect", function() {
-			var index = $elem.data("bselect").itemsMap[ this.value ];
+			var index = $elem.data( dataName ).itemsMap[ this.value ];
 			_callMethod( $elem, "select", index );
 		}).trigger("change.bselect");
 
-		$( document ).on("click", "label[for='" + $elem.attr("id") + "']", function( e ) {
-			_callMethod( $elem, "show" );
-			return false;
-		});
+		if ( elem.id ) {
+			$( document ).on("click", "label[for='" + elem.id + "']", function() {
+				_callMethod( $elem, "show" );
+				return false;
+			});
+		}
 	}
 
 	$.fn.bselect = function( arg ) {
 		if ( typeof arg === "string" && this[ 0 ] ) {
-			if ( $.isPlainObject( $( this[ 0 ] ).data("bselect") ) && methods[ arg ] !== undefined ) {
+			if ( $.isPlainObject( $( this[ 0 ] ).data( dataName ) ) && methods[ arg ] !== undefined ) {
 				return methods[ arg ].apply( $( this[ 0 ] ), Array.prototype.slice.call( arguments, 1 ) );
 			}
 
@@ -507,7 +506,7 @@
 
 		return this.each(function() {
 			// #8 - avoid creating bselect again on the same element
-			if ( $.isPlainObject( $( this ).data("bselect") ) ) {
+			if ( $.isPlainObject( $( this ).data( dataName ) ) ) {
 				return;
 			}
 
@@ -540,7 +539,7 @@
 		var i, len, data;
 
 		for ( i = 0, len = instances.length; i < len; i++ ) {
-			data = instances[ i ].data("bselect");
+			data = instances[ i ].data( dataName );
 
 			if ( data.open && !data.element.has( e.target ).length ) {
 				_callMethod( instances[ i ], "hide" );
@@ -553,7 +552,7 @@
 		var i, len, data, caret;
 
 		for ( i = 0, len = instances.length; i < len; i++ ) {
-			data = instances[ i ].data("bselect");
+			data = instances[ i ].data( dataName );
 			caret = data.element.find(".bselect-caret");
 
 			data.element.find(".bselect-label").outerWidth( instances[ i ].outerWidth() - caret.outerWidth() );

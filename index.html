@@ -9,6 +9,10 @@
 		<link rel="stylesheet" href="support/styles/bootstrap-responsive.css" />
 		<link rel="stylesheet/less" href="src/bselect.less" />
 		<link rel="stylesheet" href="support/styles/prettify.css" />
+
+		<!--[if lte IE 8]>
+		<script src="support/scripts/html5shiv.js"></script>
+		<![endif]-->
 	</head>
 	<body>
 		<header class="hero-unit">
@@ -63,7 +67,7 @@
 						<option value="Visual Basic">Visual Basic</option>
 					</select>
 				</div>
-					
+
 				<div class="span6">
 					<label for="bselect-standard">Into this:</label>
 					<select class="languages span5" id="bselect-standard">
@@ -126,7 +130,7 @@
 						</optgroup>
 					</select>
 				</div>
-					
+
 				<div class="span6">
 					<h3>Disabled select</h3>
 					<select class="span5" id="bselect-disabled" data-placeholder="Select a rock band" disabled="disabled">
