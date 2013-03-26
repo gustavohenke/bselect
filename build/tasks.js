@@ -1,6 +1,6 @@
 module.exports = function( grunt ) {
 	"use strict";
-	var banner = grunt.file.read("src/banner.txt");
+	var banner = grunt.file.read("build/banner.txt");
 
 	// Original by the jQuery UI Team http://jqueryui.com
 	// https://github.com/jquery/jquery-ui/blob/1.10.0/build/tasks/build.js#L87
