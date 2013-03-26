@@ -55,8 +55,7 @@
 	});
 
 	test( "hide", 4, function() {
-		this.bselect.find(".bselect-dropdown").show();
-
+		this.select.show();
 		var select = this.select.bselect("hide");
 
 		ok( select.is( this.select ), "returns the select element" );

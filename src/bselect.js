@@ -2,6 +2,7 @@
 	"use strict";
 
 	var elements = 0,
+		instances = [],
 		bootstrapButtonSizes = [ "mini", "small", "large" ];
 
 	var methods = {
@@ -43,7 +44,7 @@
 
 			if ( e instanceof $.Event ) {
 				var option = _callMethod( this, "option", "showOn" );
-				e.stopPropagation();
+				//e.stopPropagation();
 
 				if ( $( e.target ).is(".bselect-label") && option !== "both" ) {
 					return this;
@@ -59,12 +60,13 @@
 			return this;
 		},
 		show: function() {
-			if ( this[ 0 ].disabled ) {
+			var data = this.data("bselect");
+			if ( this[ 0 ].disabled || data.open ) {
 				return this;
 			}
 
 			var searchInput, activeItem;
-			var bselect = _callMethod( this, "element" ),
+			var bselect = data.element,
 				dropdown = bselect.find(".bselect-dropdown");
 
 			dropdown.css( "left", "-9999em" ).show();
@@ -87,6 +89,9 @@
 			dropdown.hide().css( "left", "auto" );
 
 			dropdown.slideDown( _callMethod( this, "option", "animationDuration" ) );
+			this.data( "bselect", $.extend( data, {
+				open: true
+			}));
 
 			// The following class will allow us to show that nice inset shadow in .dropdown-toggle
 			bselect.addClass("open");
@@ -100,14 +105,19 @@
 			return this;
 		},
 		hide: function( clear ) {
-			if ( this[ 0 ].disabled ) {
+			var data = this.data("bselect");
+			if ( this[ 0 ].disabled || !data.open ) {
 				return this;
 			}
 
-			var options = _callMethod( this, "option" ),
-				bselect = _callMethod( this, "element" );
+			var options = data.options,
+				bselect = data.element;
 
 			clear = clear === undefined ? true : clear;
+
+			this.data( "bselect", $.extend( data, {
+				open: false
+			}));
 
 			bselect.find(".bselect-dropdown").slideUp( options.animationDuration );
 			bselect.removeClass("open");
@@ -123,8 +133,7 @@
 		},
 		select: function( arg ) {
 			var $elem, val;
-			var options = _callMethod( this, "option" ),
-				bselect = _callMethod( this, "element" );
+			var bselect = _callMethod( this, "element" );
 
 			if ( arg instanceof $.Event ) {
 				$elem = $( arg.currentTarget );
@@ -270,7 +279,7 @@
 				if ( isOption ) {
 					li.data( "value", this.value );
 					mapping[ this.value ] = i;
-					
+
 					li.html( "<a href='#'>" + this.text + "</a>" );
 				} else {
 					li.text( this.label );
@@ -289,8 +298,12 @@
 		},
 
 		destroy : function() {
+			var index;
 			var bselect = _callMethod( this, "element" );
 			this.data( "bselect", null );
+
+			// Remove our cached thing
+			instances.splice( instances.indexOf( this ), 1 );
 
 			bselect.remove();
 			this.show();
@@ -413,7 +426,7 @@
 		// Configure the search input
 		if ( options.searchInput === true ) {
 			var search = $("<div class='bselect-search' />");
-			
+
 			$("<input type='text' class='bselect-search-input' />").attr({
 				role: "combobox",
 				tabindex: 1,
@@ -442,7 +455,8 @@
 		// Save some precious data in the original select now, as we have the container in the DOM
 		$elem.data( "bselect", {
 			options: options,
-			element: container
+			element: container,
+			open: false
 		});
 
 		updateOptions( $elem, $.bselect.defaults, options );
@@ -459,15 +473,12 @@
 		label.outerWidth( $elem.outerWidth() - caret.outerWidth() );
 
 		// Hide this ugly select!
-		$elem.hide();
+		$elem.addClass("bselect-inaccessible");
+
+		// We'll cache the container for some actions
+		instances.push( $elem );
 
 		// Event binding
-		$( window ).click(function( e ) {
-			if ( container.find(".bselect-dropdown").is(":visible") && !$( ".bselect-dropdown, .bselect-dropdown *", container ).find( e.target ).length ) {
-				_callMethod( $elem, "hide" );
-			}
-		});
-
 		container.find(".bselect-search-input").keyup( $.proxy( methods.search, $elem ) );
 		container.on( "click", ".bselect-option", $.proxy( methods.select, $elem ) );
 		container.on( "click", ".bselect-caret, .bselect-label", $.proxy( methods.toggle, $elem ) );
@@ -524,5 +535,29 @@
 			noOptionsAvailable: "No options available."
 		}
 	};
+
+	$( document ).click(function( e ) {
+		var i, len, data;
+
+		for ( i = 0, len = instances.length; i < len; i++ ) {
+			data = instances[ i ].data("bselect");
+
+			if ( data.open && !data.element.has( e.target ).length ) {
+				_callMethod( instances[ i ], "hide" );
+			}
+		}
+	});
+
+	// #18 - resizing within the original element
+	$( window ).resize(function() {
+		var i, len, data, caret;
+
+		for ( i = 0, len = instances.length; i < len; i++ ) {
+			data = instances[ i ].data("bselect");
+			caret = data.element.find(".bselect-caret");
+
+			data.element.find(".bselect-label").outerWidth( instances[ i ].outerWidth() - caret.outerWidth() );
+		}
+	});
 
 })( jQuery );
