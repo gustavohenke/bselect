@@ -1,4 +1,4 @@
-# bselect
+# bselect [![Build Status](https://travis-ci.org/gustavohenke/bselect.png?branch=development)](https://travis-ci.org/gustavohenke/bselect)
 
 The select decorator component that was missing for Twitter Bootstrap.
 

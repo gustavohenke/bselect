@@ -7,6 +7,7 @@
 		"name": "Gustavo Henke",
 		"email": "gustavo@injoin.com.br"
 	},
+	"dependencies": {},
 	"devDependencies": {
 		"grunt": ">0.4.x",
 		"grunt-contrib-qunit": "*",
@@ -14,5 +15,8 @@
 		"grunt-contrib-uglify": "*",
 		"grunt-contrib-less": "*",
 		"grunt-contrib-clean": "*"
+	},
+	"scripts": {
+		"test": "grunt test"
 	}
 }

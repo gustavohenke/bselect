@@ -40,6 +40,7 @@ module.exports = function( grunt ) {
 			files: [ "Gruntfile.js", "src/**/*.js", "tests/**/*.js" ],
 			options: {
 				validthis: true,
+				eqnull: true,
 				globals: {
 					jQuery: true,
 					document: true
