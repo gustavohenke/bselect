@@ -1,5 +1,5 @@
 /*!
- * BSelect v0.3.1 - 2013-03-13
+ * BSelect v0.3.2 - 2013-04-21
  * 
  * Created by Gustavo Henke <gustavo@injoin.com.br>
  * http://gustavohenke.github.com/bselect/
@@ -21,6 +21,10 @@
   -webkit-box-shadow: inset 0 2px 4px rgba(0,0,0,.15), 0 1px 2px rgba(0,0,0,.05);
   -moz-box-shadow: inset 0 2px 4px rgba(0,0,0,.15), 0 1px 2px rgba(0,0,0,.05);
   box-shadow: inset 0 2px 4px rgba(0,0,0,.15), 0 1px 2px rgba(0,0,0,.05);
+}
+.bselect.disabled {
+  opacity: 0.65;
+  filter: alpha(opacity=65);
 }
 .bselect-label,
 .bselect-caret {
@@ -85,6 +89,22 @@
   content: "";
   vertical-align: top;
 }
+.bselect.disabled .bselect-label,
+.bselect.disabled .bselect-caret {
+  background-image: none;
+  cursor: not-allowed;
+  -webkit-transition: none;
+  -moz-transition: none;
+  -o-transition: none;
+  transition: none;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+}
+.bselect.disabled .bselect-label:hover,
+.bselect.disabled .bselect-caret:hover {
+  background-color: #f5f5f5;
+}
 .bselect-dropdown {
   position: absolute;
   top: 100%;
@@ -121,6 +141,7 @@
   margin: 0;
   background: #ffffff;
   border: 1px solid #cccccc;
+  cursor: text;
   -webkit-border-radius: 4px 0 0 4px;
   -moz-border-radius: 4px 0 0 4px;
   border-radius: 4px 0 0 4px;
@@ -164,6 +185,9 @@
   color: #333333;
   text-decoration: none;
 }
+.bselect-option.grouped {
+  padding-left: 15px;
+}
 .bselect-option:focus {
   outline: 0;
 }
@@ -196,6 +220,11 @@
   background-image: linear-gradient(to bottom, #0088cc, #0077b3);
   background-repeat: repeat-x;
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff0088cc', endColorstr='#ff0077b3', GradientType=0);
+}
+.bselect-option-group {
+  padding: 5px 20px 5px 15px;
+  font-weight: bold;
+  cursor: default;
 }
 .bselect.bselect-mini .bselect-label,
 .bselect.bselect-mini .bselect-caret {
@@ -233,4 +262,11 @@
 .bselect.bselect-small,
 .bselect.bselect-large {
   margin-top: 6px;
+}
+.bselect-inaccessible {
+  position: absolute !important;
+  top: -9999em !important;
+  left: -9999em !important;
+  clip: rect(0, 0, 0, 0) !important;
+  visibility: hidden !important;
 }

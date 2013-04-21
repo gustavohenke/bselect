@@ -1,5 +1,5 @@
 /*!
- * BSelect v0.3.1 - 2013-03-13
+ * BSelect v0.3.2 - 2013-04-21
  * 
  * Created by Gustavo Henke <gustavo@injoin.com.br>
  * http://gustavohenke.github.com/bselect/
@@ -8,6 +8,9 @@
 @import "mixins.less";
 
 @bselectItemPadding: 5px 20px 5px 15px;
+
+// Root element styles
+// --------------------------------
 
 .bselect {
 	position: relative;
@@ -24,8 +27,16 @@
 		background-image: none;
 		#bselect-mixins > .box-shadow(~"inset 0 2px 4px rgba(0,0,0,.15), 0 1px 2px rgba(0,0,0,.05)");
 	}
+
+	&.disabled {
+		#bselect-mixins > .opacity(65);
+	}
 }
 
+// Label/caret
+// --------------------------------
+
+// Label and caret have basically the same styles
 .bselect-label,
 .bselect-caret {
 	position: relative;
@@ -78,6 +89,21 @@
 	}
 }
 
+// Styles for the disabled bselect
+.bselect.disabled .bselect-label,
+.bselect.disabled .bselect-caret {
+	background-image: none;
+	cursor: not-allowed;
+	#bselect-mixins > .transition(none);
+	#bselect-mixins > .box-shadow(none);
+
+	&:hover {
+		background-color: mix(@btnBackground, @btnBackgroundHighlight, 60%);
+	}
+}
+
+// Dropdown
+// --------------------------------
 .bselect-dropdown {
 	position: absolute;
 	top: 100%;
@@ -112,6 +138,7 @@
 		margin: 0;
 		background: @inputBackground;
 		border: 1px solid @inputBorder;
+		cursor: text;
 		#bselect-mixins > .border-radius(@baseBorderRadius 0 0 @baseBorderRadius);
 		#bselect-mixins > .box-shadow(inset 0 1px 1px rgba(0, 0, 0, .075));
 
@@ -150,12 +177,19 @@
 	overflow-x: hidden;
 }
 
+// Dropdown items
+// --------------------------------
 .bselect-option {
 	> a {
 		display: block;
 		padding: @bselectItemPadding;
 		color: @dropdownLinkColor;
 		text-decoration: none;
+	}
+
+	&.grouped {
+		// Should have this extra padding, to visually indicate that it's grouped
+		padding-left: 15px;
 	}
 
 	&:focus {
@@ -182,6 +216,17 @@
 	}
 }
 
+.bselect-option-group {
+	padding: @bselectItemPadding;
+	font-weight: bold;
+	cursor: default;
+}
+
+
+// Sizes
+// --------------------------------
+
+// Mini
 .bselect.bselect-mini {
 	.bselect-label,
 	.bselect-caret {
@@ -195,6 +240,7 @@
 	}
 }
 
+// Small
 .bselect.bselect-small {
 	.bselect-label,
 	.bselect-caret {
@@ -208,6 +254,7 @@
 	}
 }
 
+// Large
 .bselect.bselect-large {
 	.bselect-label,
 	.bselect-caret {
@@ -227,10 +274,21 @@
 	}
 }
 
+// Shared styles across all sizes
 .bselect {
 	&.bselect-mini,
 	&.bselect-small,
 	&.bselect-large {
 		margin-top: 6px;
 	}
+}
+
+// Utils
+// --------------------------------
+.bselect-inaccessible {
+	position: absolute !important;
+	top: -9999em !important;
+	left: -9999em !important;
+	clip: rect(0, 0, 0, 0) !important;
+	visibility: hidden !important;
 }

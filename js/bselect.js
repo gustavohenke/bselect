@@ -1,5 +1,5 @@
 /*!
- * BSelect v0.3.1 - 2013-03-13
+ * BSelect v0.3.2 - 2013-04-21
  * 
  * Created by Gustavo Henke <gustavo@injoin.com.br>
  * http://gustavohenke.github.com/bselect/
@@ -7,11 +7,15 @@
 (function( $, undefined ) {
 	"use strict";
 
-	var elements = 0;
+	var elements = 0,
+		dataName = "bselect",
+		instances = [],
+		bootstrapButtonSizes = [ "mini", "small", "large" ];
+
 	var methods = {
 		// Get/set options of the component
 		option: function( option, value ) {
-			var curr = this.data("bselect").options || {},
+			var curr = this.data( dataName ).options || {},
 				prev = $.extend( {}, curr );
 
 			if ( typeof option === "string" && option[ 0 ] !== "_" ) {
@@ -27,7 +31,7 @@
 				$.extend( curr, option );
 				updateOptions( this, prev, curr );
 
-				this.data("bselect").options = curr;
+				this.data( dataName ).options = curr;
 			}
 
 			return curr;
@@ -35,15 +39,19 @@
 
 		// Retrieve the BSelect container
 		element: function() {
-			return this.data("bselect").element;
+			return this.data( dataName ).element;
 		},
 
 		toggle: function( e ) {
+			if ( this[ 0 ].disabled ) {
+				return this;
+			}
+
 			var bselect = _callMethod( this, "element" );
 
 			if ( e instanceof $.Event ) {
 				var option = _callMethod( this, "option", "showOn" );
-				e.stopPropagation();
+				//e.stopPropagation();
 
 				if ( $( e.target ).is(".bselect-label") && option !== "both" ) {
 					return this;
@@ -59,8 +67,13 @@
 			return this;
 		},
 		show: function() {
+			var data = this.data( dataName );
+			if ( this[ 0 ].disabled || data.open ) {
+				return this;
+			}
+
 			var searchInput, activeItem;
-			var bselect = _callMethod( this, "element" ),
+			var bselect = data.element,
 				dropdown = bselect.find(".bselect-dropdown");
 
 			dropdown.css( "left", "-9999em" ).show();
@@ -83,6 +96,9 @@
 			dropdown.hide().css( "left", "auto" );
 
 			dropdown.slideDown( _callMethod( this, "option", "animationDuration" ) );
+			this.data( dataName, $.extend( data, {
+				open: true
+			}));
 
 			// The following class will allow us to show that nice inset shadow in .dropdown-toggle
 			bselect.addClass("open");
@@ -96,10 +112,19 @@
 			return this;
 		},
 		hide: function( clear ) {
-			var options = _callMethod( this, "option" ),
-				bselect = _callMethod( this, "element" );
+			var data = this.data( dataName );
+			if ( this[ 0 ].disabled || !data.open ) {
+				return this;
+			}
+
+			var options = data.options,
+				bselect = data.element;
 
 			clear = clear === undefined ? true : clear;
+
+			this.data( dataName, $.extend( data, {
+				open: false
+			}));
 
 			bselect.find(".bselect-dropdown").slideUp( options.animationDuration );
 			bselect.removeClass("open");
@@ -115,8 +140,7 @@
 		},
 		select: function( arg ) {
 			var $elem, val;
-			var options = _callMethod( this, "option" ),
-				bselect = _callMethod( this, "element" );
+			var bselect = _callMethod( this, "element" );
 
 			if ( arg instanceof $.Event ) {
 				$elem = $( arg.currentTarget );
@@ -157,6 +181,10 @@
 
 		// Searches every item in the list for the given text
 		search: function( arg ) {
+			if ( this[ 0 ].disabled ) {
+				return this;
+			}
+
 			var listItems, i;
 			var options = _callMethod( this, "option" ),
 				searched = arg instanceof $.Event ? arg.target.value : arg,
@@ -209,6 +237,26 @@
 			return this;
 		},
 
+		// Disable the bselect instance
+		disable: function() {
+			if ( !this[ 0 ].disabled ) {
+				_callMethod( this, "element" ).addClass("disabled");
+				this.prop( "disabled", true );
+			}
+
+			return this;
+		},
+
+		// Enable the bselect instance
+		enable: function() {
+			if ( this[ 0 ].disabled ) {
+				_callMethod( this, "element" ).removeClass("disabled");
+				this.prop( "disabled", false );
+			}
+
+			return this;
+		},
+
 		// Refreshes the option list. Useful when new HTML is added
 		refresh: function() {
 			var bselect = _callMethod( this, "element" ),
@@ -216,22 +264,35 @@
 				mapping = {},
 				i = 0;
 
-			this.find("option").each(function() {
-				if ( !this.value ) {
+			bselect.toggleClass( "disabled", this.prop("disabled") );
+
+			this.find("option, > optgroup").each(function() {
+				var classes, li;
+				var isOption = $( this ).is("option");
+
+				if ( isOption && !this.value ) {
 					return;
 				}
 
-				var li = $( "<li class='bselect-option' />" ).attr({
+				classes = isOption ? "bselect-option" + ( $( this ).closest("optgroup").length ? " grouped" : "" ) : "bselect-option-group";
+				li = $( "<li />" ).attr({
+					"class": classes,
+					// While there aren't roles for optgroup, we'll stick with the role option.
 					role: "option",
-					tabindex: 2,
+					tabindex: isOption ? 2 : -1,
 					"aria-selected": "false"
-				}).data( "value", this.value );
+				});
 
-				mapping[ this.value ] = i;
+				if ( isOption ) {
+					li.data( "value", this.value );
+					mapping[ this.value ] = i;
 
-				li.append( "<a href='#'>" + this.text + "</a>" );
+					li.html( "<a href='#'>" + this.text + "</a>" );
+				} else {
+					li.text( this.label );
+				}
+
 				li.appendTo( optionList );
-
 				i++;
 			});
 
@@ -239,21 +300,22 @@
 				showNoOptionsAvailable( this );
 			}
 
-			this.data("bselect").itemsMap = mapping;
+			this.data( dataName ).itemsMap = mapping;
 			return this;
 		},
 
-		destroy : function() {
+		destroy: function() {
 			var bselect = _callMethod( this, "element" );
-			this.data( "bselect", null );
+			this.data( dataName, null );
+
+			// Remove our cached thing
+			instances.splice( instances.indexOf( this ), 1 );
 
 			bselect.remove();
 			this.show();
 			return this;
 		}
 	};
-
-	var bootstrapButtonSizes = [ "mini", "small", "large" ];
 
 	// Helper function that will call an BSelect method in the context of $elem
 	function _callMethod( $elem, method ) {
@@ -291,10 +353,7 @@
 		$.each( prev, function(key, val) {
 			if ( curr[ key ] !== val ) {
 				if ( key === "size" ) {
-					var sizes;
-					var i = 0;
-
-					sizes = $.map( bootstrapButtonSizes.slice( 0 ), function( size ) {
+					var sizes = $.map( bootstrapButtonSizes.slice( 0 ), function( size ) {
 						return "bselect-" + size;
 					}).join(" ");
 
@@ -330,7 +389,7 @@
 				if ( isInput ) {
 					$( e.delegateTarget ).find(".bselect-option:visible:last").focus();
 				} else {
-					$this.prevAll(":visible").eq( 0 ).focus();
+					$this.prevAll(".bselect-option:visible").eq( 0 ).focus();
 				}
 				break;
 
@@ -339,7 +398,7 @@
 				if ( isInput ) {
 					$( e.delegateTarget ).find(".bselect-option:visible:first").focus();
 				} else {
-					$this.nextAll(":visible").eq( 0 ).focus();
+					$this.nextAll(".bselect-option:visible").eq( 0 ).focus();
 				}
 				break;
 
@@ -370,7 +429,7 @@
 		// Configure the search input
 		if ( options.searchInput === true ) {
 			var search = $("<div class='bselect-search' />");
-			
+
 			$("<input type='text' class='bselect-search-input' />").attr({
 				role: "combobox",
 				tabindex: 1,
@@ -397,9 +456,10 @@
 		container.append( dropdown ).insertAfter( $elem );
 
 		// Save some precious data in the original select now, as we have the container in the DOM
-		$elem.data( "bselect", {
+		$elem.data( dataName, {
 			options: options,
-			element: container
+			element: container,
+			open: false
 		});
 
 		updateOptions( $elem, $.bselect.defaults, options );
@@ -416,15 +476,12 @@
 		label.outerWidth( $elem.outerWidth() - caret.outerWidth() );
 
 		// Hide this ugly select!
-		$elem.hide();
+		$elem.addClass("bselect-inaccessible");
+
+		// We'll cache the container for some actions
+		instances.push( $elem );
 
 		// Event binding
-		$( window ).click(function( e ) {
-			if ( container.find(".bselect-dropdown").is(":visible") && !$( ".bselect-dropdown, .bselect-dropdown *", container ).find( e.target ).length ) {
-				_callMethod( $elem, "hide" );
-			}
-		});
-
 		container.find(".bselect-search-input").keyup( $.proxy( methods.search, $elem ) );
 		container.on( "click", ".bselect-option", $.proxy( methods.select, $elem ) );
 		container.on( "click", ".bselect-caret, .bselect-label", $.proxy( methods.toggle, $elem ) );
@@ -432,19 +489,21 @@
 
 		// Issue #6 - Listen to the change event and update the selected value
 		$elem.bind( "change.bselect", function() {
-			var index = $elem.data("bselect").itemsMap[ this.value ];
+			var index = $elem.data( dataName ).itemsMap[ this.value ];
 			_callMethod( $elem, "select", index );
 		}).trigger("change.bselect");
 
-		$( document ).on("click", "label[for='" + $elem.attr("id") + "']", function( e ) {
-			_callMethod( $elem, "show" );
-			return false;
-		});
+		if ( elem.id ) {
+			$( document ).on("click", "label[for='" + elem.id + "']", function() {
+				_callMethod( $elem, "show" );
+				return false;
+			});
+		}
 	}
 
 	$.fn.bselect = function( arg ) {
 		if ( typeof arg === "string" && this[ 0 ] ) {
-			if ( $.isPlainObject( $( this[ 0 ] ).data("bselect") ) && methods[ arg ] !== undefined ) {
+			if ( $.isPlainObject( $( this[ 0 ] ).data( dataName ) ) && methods[ arg ] !== undefined ) {
 				return methods[ arg ].apply( $( this[ 0 ] ), Array.prototype.slice.call( arguments, 1 ) );
 			}
 
@@ -453,7 +512,7 @@
 
 		return this.each(function() {
 			// #8 - avoid creating bselect again on the same element
-			if ( $.isPlainObject( $( this ).data("bselect") ) ) {
+			if ( $.isPlainObject( $( this ).data( dataName ) ) ) {
 				return;
 			}
 
@@ -481,5 +540,29 @@
 			noOptionsAvailable: "No options available."
 		}
 	};
+
+	$( document ).click(function( e ) {
+		var i, len, data;
+
+		for ( i = 0, len = instances.length; i < len; i++ ) {
+			data = instances[ i ].data( dataName );
+
+			if ( data.open && !data.element.has( e.target ).length ) {
+				_callMethod( instances[ i ], "hide" );
+			}
+		}
+	});
+
+	// #18 - resizing within the original element
+	$( window ).resize(function() {
+		var i, len, data, caret;
+
+		for ( i = 0, len = instances.length; i < len; i++ ) {
+			data = instances[ i ].data( dataName );
+			caret = data.element.find(".bselect-caret");
+
+			data.element.find(".bselect-label").outerWidth( instances[ i ].outerWidth() - caret.outerWidth() );
+		}
+	});
 
 })( jQuery );
