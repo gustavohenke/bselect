@@ -1,8 +1,8 @@
 /*!
- * BSelect v0.3.2 - 2013-04-21
+ * BSelect v0.3.3 - 2013-07-08
  * 
  * Created by Gustavo Henke <gustavo@injoin.com.br>
- * http://gustavohenke.github.com/bselect/
+ * http://gustavohenke.github.io/bselect/
  */
 .bselect {
   position: relative;
@@ -63,6 +63,7 @@
 }
 .bselect-label {
   padding: 4px 12px;
+  overflow: hidden;
   text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
   -webkit-border-radius: 4px 0 0 4px;
   -moz-border-radius: 4px 0 0 4px;
@@ -184,6 +185,7 @@
   padding: 5px 20px 5px 15px;
   color: #333333;
   text-decoration: none;
+  white-space: normal;
 }
 .bselect-option.grouped {
   padding-left: 15px;
@@ -225,6 +227,7 @@
   padding: 5px 20px 5px 15px;
   font-weight: bold;
   cursor: default;
+  white-space: normal;
 }
 .bselect.bselect-mini .bselect-label,
 .bselect.bselect-mini .bselect-caret {

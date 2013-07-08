@@ -6,7 +6,7 @@
 		"bootstrap",
 		"select"
 	],
-	"version": "0.3.2",
+	"version": "0.3.3",
 	"author": {
 		"name": "Gustavo Henke",
 		"email": "gustavo@injoin.com.br"
@@ -18,8 +18,8 @@
 		"type": "MIT",
 		"url": "https://github.com/gustavohenke/bselect/raw/development/LICENSE.txt"
 	}],
-	"homepage": "https://gustavohenke.github.com/bselect/",
+	"homepage": "https://gustavohenke.github.io/bselect/",
 	"bugs": "https://github.com/gustavohenke/bselect/issues",
-	"docs": "https://gustavohenke.github.com/bselect/",
-	"demo": "https://gustavohenke.github.com/bselect/"
+	"docs": "https://gustavohenke.github.io/bselect/",
+	"demo": "https://gustavohenke.github.io/bselect/"
 }

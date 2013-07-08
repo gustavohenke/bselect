@@ -1,8 +1,8 @@
 /*!
- * BSelect v0.3.2 - 2013-04-21
+ * BSelect v0.3.3 - 2013-07-08
  * 
  * Created by Gustavo Henke <gustavo@injoin.com.br>
- * http://gustavohenke.github.com/bselect/
+ * http://gustavohenke.github.io/bselect/
  */
 @import "variables.less";
 @import "mixins.less";
@@ -64,6 +64,7 @@
 
 .bselect-label {
 	padding: 4px 12px;
+	overflow: hidden;
 	text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
 	#bselect-mixins > .border-radius(@baseBorderRadius 0 0 @baseBorderRadius);
 }
@@ -185,6 +186,7 @@
 		padding: @bselectItemPadding;
 		color: @dropdownLinkColor;
 		text-decoration: none;
+		white-space: normal;
 	}
 
 	&.grouped {
@@ -220,6 +222,7 @@
 	padding: @bselectItemPadding;
 	font-weight: bold;
 	cursor: default;
+	white-space: normal;
 }
 
 
