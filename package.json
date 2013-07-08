@@ -7,14 +7,18 @@
 		"name": "Gustavo Henke",
 		"email": "gustavo@injoin.com.br"
 	},
+	"repository": {
+		"type": "git",
+		"url": "git@github.com/gustavohenke/bselect.git"
+	},
 	"dependencies": {},
 	"devDependencies": {
-		"grunt": ">0.4.x",
-		"grunt-contrib-qunit": "*",
-		"grunt-contrib-jshint": "*",
-		"grunt-contrib-uglify": "*",
-		"grunt-contrib-less": "*",
-		"grunt-contrib-clean": "*"
+		"grunt": "0.4.x",
+		"grunt-contrib-qunit": "0.2.x",
+		"grunt-contrib-jshint": "0.2.x",
+		"grunt-contrib-uglify": "~0.1.2",
+		"grunt-contrib-less": "0.5.x",
+		"grunt-contrib-clean": "0.4.x"
 	},
 	"scripts": {
 		"test": "grunt test"
