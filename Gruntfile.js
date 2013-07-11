@@ -3,6 +3,12 @@ module.exports = function( grunt ) {
 
 	grunt.initConfig({
 		pkg: grunt.file.readJSON("package.json"),
+		watch: {
+			less: {
+				files: "src/*.less",
+				tasks: "less"
+			}
+		},
 		clean: {
 			pre: [ "dist" ],
 			post: [ "dist/*.less", "dist/*.js", "dist/*.css" ]
@@ -37,7 +43,7 @@ module.exports = function( grunt ) {
 			files: [ "tests/index.html" ]
 		},
 		jshint: {
-			files: [ "Gruntfile.js", "src/**/*.js", "tests/**/*.js" ],
+			files: [ "Gruntfile.js", "src/**/*.js" ],
 			options: {
 				jshintrc: ".jshintrc"
 			}
@@ -69,8 +75,16 @@ module.exports = function( grunt ) {
 	grunt.loadNpmTasks("grunt-contrib-qunit");
 	grunt.loadNpmTasks("grunt-contrib-less");
 	grunt.loadNpmTasks("grunt-contrib-clean");
+	grunt.loadNpmTasks("grunt-contrib-watch");
 	grunt.loadTasks("build");
 
 	grunt.registerTask( "test", [ "jshint", "qunit" ] );
-	grunt.registerTask( "default", [ "clean:pre", "jshint", "qunit", "uglify", "less", "copy", "clean:post" ] );
+	grunt.registerTask( "default", [
+        "clean:pre",
+        "test",
+        "uglify",
+        "less",
+        "copy",
+        "clean:post"
+    ]);
 };

@@ -2,7 +2,7 @@
 	"validthis":    true,
 	"eqnull":       true,
 	"eqeqeq":       true,
-	"maxlen":       120,
+	"maxlen":       100,
 
 	"browser":      true,
 	"jquery":       true
