@@ -15,6 +15,7 @@ The select decorator component that was missing for Twitter Bootstrap.
 
 ## Installation
 * Installation via Bower: `bower install bselect`
+* Installation via NPM: `npm install bselect`
 * Download zip/tarball - https://github.com/gustavohenke/bselect/archive/master.zip
 * git clone this repo: `git clone git@github.com:gustavohenke/bselect.git`
 
