@@ -1,4 +1,4 @@
-(function( $, undefined ) {
+(function( $, sinon, undefined ) {
     "use strict";
 
     module( "Methods", {
@@ -35,9 +35,14 @@
         strictEqual( option, 2, "get the current option value" );
     });
 
-    test( "select", 5, function() {
-        var select = this.select.bselect( "select", 2 );
-        var li = this.bselect.find( "li" ).eq( 2 );
+    test( "select", 6, function() {
+        var spy, select, li;
+
+        spy = sinon.spy();
+        this.select.change( spy );
+
+        select = this.select.bselect( "select", 2 );
+        li = this.bselect.find( "li" ).eq( 2 );
 
         ok( select.is( this.select ), "returns the select element" );
         ok( li.is( ".active" ), "the LI index 2 must be .active" );
@@ -49,6 +54,7 @@
 
         this.select.bselect( "select", 4 );
         ok( li.is( ".active" ), "if the index is not found, shouldn't do anything" );
+        ok( spy.calledOnce, "should trigger 'change' event of the select element" );
     });
 
     test( "show", 4, function() {
@@ -179,4 +185,4 @@
         strictEqual( this.bselect.has( "body" ).length, 0, "has no .bselect related element" );
     });
 
-})( jQuery );
+})( jQuery, sinon );

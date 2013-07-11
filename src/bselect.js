@@ -168,7 +168,8 @@
             _callMethod( this, "hide" );
 
             // We'll keep up-to-date the old select, too
-            this.val( val );
+            this.data( dataName ).tempDisable = true;
+            this.val( val ).trigger( "change" );
 
             // Trigger the selected event
             this.trigger( "bselectselected", [ val, option ] );
@@ -511,7 +512,14 @@
 
         // Issue #6 - Listen to the change event and update the selected value
         $elem.bind( "change.bselect", function() {
-            var index = $elem.data( dataName ).itemsMap[ this.value ];
+            var data = $elem.data( dataName );
+            var index = data.itemsMap[ this.value ];
+
+            if ( data.tempDisable ) {
+                data.tempDisable = false;
+                return;
+            }
+
             _callMethod( $elem, "select", index );
         }).trigger( "change.bselect" );
     }

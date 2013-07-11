@@ -16,42 +16,42 @@
     });
 
     test( "select and selected", 5, function() {
-        this.select.bind( "bselectselect", function( e, option ) {
-            ok( true, "should call 'select'" );
-            ok(
-                $( option ).is( "option[value='option2']" ),
-                "select - the second arg should be the selected element"
-            );
+        var select = sinon.spy();
+        var selected = sinon.spy();
 
-            start( 1 );
-        });
-
-        this.select.bind( "bselectselected", function( e, val, option ) {
-            ok( true, "should call 'selected'" );
-            strictEqual( val, "option2", "selected - the second arg should be the selected value" );
-            ok(
-                $( option ).is( "option[value='option2']" ),
-                "selected - the third arg should be the selected element"
-            );
-
-            start( 1 );
-        });
-
-        stop( 2 );
+        this.select.bind( "bselectselect", select );
+        this.select.bind( "bselectselected", selected );
         this.select.bselect( "select", 1 );
+
+        ok( select.calledOnce, "should call 'select'" );
+        ok(
+            $( select.args[ 0 ][ 1 ] ).is( "option[value='option2']" ),
+            "select - the second arg should be the selected element"
+        );
+
+        ok( selected.calledOnce, "should call 'selected'" );
+        strictEqual(
+            selected.args[ 0 ][ 1 ], "option2",
+            "selected - the second arg should be the selected value"
+        );
+        ok(
+            $( selected.args[ 0 ][ 2 ] ).is( "option[value='option2']" ),
+            "selected - the third arg should be the selected element"
+        );
     });
 
     test( "search", 3, function() {
-        this.select.bind( "bselectsearch", function( e, searchedText, results ) {
-            ok( true, "should call 'search'" );
-            strictEqual( searchedText, "1", "second arg should be the searched text" );
-            ok( results.jquery, "third arg should be the results as a jQuery collection" );
+        var spy = sinon.spy();
 
-            start();
-        });
-
-        stop();
+        this.select.bind( "bselectsearch", spy );
         this.select.bselect( "search", "1" );
+
+        ok( spy.calledOnce, "should call 'search'" );
+        strictEqual( spy.args[ 0 ][ 1 ], "1", "second arg should be the searched text" );
+        ok(
+            spy.args[ 0 ][ 2 ] instanceof $,
+            "third arg should be the results as a jQuery collection"
+        );
     });
 
 })( jQuery );
