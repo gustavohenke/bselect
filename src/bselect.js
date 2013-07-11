@@ -322,7 +322,7 @@
             instances.splice( instances.indexOf( this ), 1 );
 
             bselect.remove();
-            this.show();
+            this.removeClass( "bselect-inaccessible" ).unbind( ".bselect" );
             return this;
         }
     };
@@ -486,9 +486,9 @@
         updateOptions( $elem, $.bselect.defaults, options );
         _callMethod( $elem, "refresh" );
 
-        $elem.bind( "bselectselect", options.select );
-        $elem.bind( "bselectselected", options.selected );
-        $elem.bind( "bselectsearch", options.search );
+        $elem.bind( "bselectselect.bselect", options.select );
+        $elem.bind( "bselectselected.bselect", options.selected );
+        $elem.bind( "bselectsearch.bselect", options.search );
 
         label = $( "<span />" ).addClass( "bselect-label" ).text( getPlaceholder( $elem ) );
         caret = $( "<button type='button' />" ).addClass( "bselect-caret" )
@@ -514,13 +514,6 @@
             var index = $elem.data( dataName ).itemsMap[ this.value ];
             _callMethod( $elem, "select", index );
         }).trigger( "change.bselect" );
-
-        if ( elem.id ) {
-            $( document ).on( "click", "label[for='" + elem.id + "']", function() {
-                _callMethod( $elem, "show" );
-                return false;
-            });
-        }
     }
 
     $.fn.bselect = function( arg ) {
@@ -563,7 +556,17 @@
         }
     };
 
-    $( document ).click(function( e ) {
+    $( document ).on( "click.bselect", "label", function( e ) {
+        var i, len, id;
+
+        for ( i = 0, len = instances.length; i < len; i++ ) {
+            id = instances[ i ][ 0 ].id;
+            if ( id && $( e.target ).attr( "for" ) === id ) {
+                _callMethod( instances[ i ], "show" );
+                return false;
+            }
+        }
+    }).on( "click.bselect", function( e ) {
         var i, len, data;
 
         for ( i = 0, len = instances.length; i < len; i++ ) {
