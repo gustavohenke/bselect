@@ -1,5 +1,5 @@
 /*!
- * BSelect v0.3.3 - 2013-07-08
+ * BSelect v0.3.4 - 2013-07-11
  * 
  * Created by Gustavo Henke <gustavo@injoin.com.br>
  * http://gustavohenke.github.io/bselect/
@@ -267,9 +267,17 @@
   margin-top: 6px;
 }
 .bselect-inaccessible {
-  position: absolute !important;
+  position: relative !important;
   top: -9999em !important;
   left: -9999em !important;
   clip: rect(0, 0, 0, 0) !important;
+  display: block !important;
   visibility: hidden !important;
+  min-height: 0 !important;
+  height: 0 !important;
+  margin: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  border-top: 0 !important;
+  border-bottom: 0 !important;
 }
