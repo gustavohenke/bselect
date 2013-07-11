@@ -283,9 +283,17 @@
 // Utils
 // --------------------------------
 .bselect-inaccessible {
-	position: absolute !important;
+	position: relative !important;
 	top: -9999em !important;
 	left: -9999em !important;
 	clip: rect(0, 0, 0, 0) !important;
+	display: block !important;
 	visibility: hidden !important;
+	min-height: 0 !important;
+	height: 0 !important;
+	margin: 0 !important;
+	padding-top: 0 !important;
+	padding-bottom: 0 !important;
+	border-top: 0 !important;
+	border-bottom: 0 !important;
 }
