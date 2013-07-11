@@ -39,12 +39,7 @@ module.exports = function( grunt ) {
 		jshint: {
 			files: [ "Gruntfile.js", "src/**/*.js", "tests/**/*.js" ],
 			options: {
-				validthis: true,
-				eqnull: true,
-				globals: {
-					jQuery: true,
-					document: true
-				}
+				jshintrc: ".jshintrc"
 			}
 		},
 		copy: {

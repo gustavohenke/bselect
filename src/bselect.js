@@ -268,7 +268,15 @@
 					return;
 				}
 
-				classes = isOption ? "bselect-option" + ( $( this ).closest("optgroup").length ? " grouped" : "" ) : "bselect-option-group";
+				if ( isOption ) {
+					classes = "bselect-option";
+					if ( $( this ).closest("optgroup").length ) {
+						classes += " grouped";
+					}
+				} else {
+					classes = "bselect-option-group";
+				}
+
 				li = $( "<li />" ).attr({
 					"class": classes,
 					// While there aren't roles for optgroup, we'll stick with the role option.
