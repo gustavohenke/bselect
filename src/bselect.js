@@ -400,8 +400,8 @@
             return;
         }
 
-        var $this = $( this ),
-            isInput = $this.is( ".bselect-search-input" );
+        var $this = $( this );
+        var isInput = $this.is( ".bselect-search-input" );
 
         switch ( e.keyCode ) {
             // UP

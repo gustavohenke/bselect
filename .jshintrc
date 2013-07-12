@@ -1,9 +1,9 @@
 {
-	"validthis":    true,
-	"eqnull":       true,
-	"eqeqeq":       true,
-	"maxlen":       100,
+    "validthis":    true,
+    "eqnull":       true,
+    "eqeqeq":       true,
+    "maxlen":       100,
 
-	"browser":      true,
-	"jquery":       true
+    "browser":      true,
+    "jquery":       true
 }
