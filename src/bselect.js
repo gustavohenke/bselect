@@ -141,6 +141,7 @@
 
             if ( arg instanceof $.Event ) {
                 $elem = $( arg.currentTarget );
+                arg.preventDefault();
             } else {
                 $elem = bselect.find( "li" ).eq( arg );
 
