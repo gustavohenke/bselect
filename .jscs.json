@@ -15,6 +15,7 @@
     "disallowMultipleLineBreaks":           true,
     "disallowKeywordsOnNewLine":            [ "else" ],
     "requireKeywordsOnNewLine":             [],
+    "requireSpacesInsideArrayBrackets":     "all",
     "validateJSDoc": {
         "checkParamNames":      true,
         "checkRedundantParams": true,
