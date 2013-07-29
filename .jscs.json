@@ -4,7 +4,6 @@
     "disallowSpaceAfterKeywords":           [],
     "disallowMultipleVarDecl":              true,
     "requireSpacesInsideObjectBrackets":    "all",
-    "disallowQuotedKeysInObjects":          false,
     "disallowSpaceAfterObjectKeys":         true,
     "disallowLeftStickedOperators":         [ "?", "+", "-", "/", "*", "=", "==", "===", "!=", "!==", ">", ">=", "<", "<=" ],
     "requireRightStickedOperators":         [ "!" ],
