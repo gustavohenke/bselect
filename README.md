@@ -36,7 +36,7 @@ $("select").bselect("option", "animationDuration", 600);
 ```
 
 ## Bugs
-If you've found any problems, [don't be aware to tell me!](https://github.com/gustavohenke/bselect/issues/new)
+If you've found any problems, [don't be afraid to tell me!](https://github.com/gustavohenke/bselect/issues/new)
 
 ## License
 MIT
