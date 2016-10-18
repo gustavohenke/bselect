@@ -146,6 +146,7 @@
                 $elem = bselect.find( "li" ).eq( arg );
 
                 if ( !$elem.length ) {
+					bselect.find( ".bselect-label" ).text( getPlaceholder( this ) );
                     return this;
                 }
             }
@@ -380,6 +381,11 @@
                         bselect.addClass( "bselect-" + curr.size );
                     }
                 }
+				if(key === "select"){
+					var data1 = $elem.data( dataName );
+					var index = data1.itemsMap[ data1.options.select];
+					_callMethod( $elem, "select", index );
+				}
             }
         });
     }
