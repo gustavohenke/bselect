@@ -146,6 +146,7 @@
                 $elem = bselect.find( "li" ).eq( arg );
 
                 if ( !$elem.length ) {
+					bselect.find( ".bselect-label" ).text( getPlaceholder( $elem ) );
                     return this;
                 }
             }
